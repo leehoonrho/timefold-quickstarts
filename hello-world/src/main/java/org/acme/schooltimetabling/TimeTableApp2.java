@@ -17,11 +17,13 @@ import org.acme.schooltimetabling.domain.Room;
 import org.acme.schooltimetabling.domain.TimeTable;
 import org.acme.schooltimetabling.domain.Timeslot;
 import org.acme.schooltimetabling.solver.TimeTableConstraintProvider;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,9 +33,10 @@ public class TimeTableApp2 {
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeTableApp2.class);
 
     public static void main(String[] args) {
-        boolean createFromXmlResource = true; boolean usePhaseConfig = false;
-//        boolean createFromXmlResource = false; boolean usePhaseConfig = true;
-        boolean explainScore = false;
+        boolean createFromXmlResource = true; boolean usePhaseConfig = false; boolean explainScore = true;
+//        boolean createFromXmlResource = false; boolean usePhaseConfig = true; boolean explainScore = true;
+//        boolean createFromXmlResource = false; boolean usePhaseConfig = false; boolean explainScore = false;
+
 
         SolverFactory<TimeTable> solverFactory;
         if (createFromXmlResource) {
@@ -53,36 +56,17 @@ public class TimeTableApp2 {
                 solverConfig.withPhases(
                         createConstructionHeuristicPhaseConfig(
                                 ConstructionHeuristicType.FIRST_FIT,
-                                new TerminationConfig().withSecondsSpentLimit(Long.valueOf("5"))
+                                new TerminationConfig().withSpentLimit(Duration.ofSeconds(5))
                         ),
-
                         createLocalSearchPhaseConfig(
                                 LocalSearchType.LATE_ACCEPTANCE,
-                                new TerminationConfig().withMinutesSpentLimit(Long.valueOf("1"))
+                                new TerminationConfig().withSpentLimit(Duration.ofMinutes(1))
                         ),
                         createLocalSearchPhaseConfig(
                                 LocalSearchType.TABU_SEARCH,
-                                new TerminationConfig().withMinutesSpentLimit(Long.valueOf("1"))
+                                new TerminationConfig().withSpentLimit(Duration.ofMinutes(1))
                         )
                 );
-
-//                List<PhaseConfig> phaseConfigList = new ArrayList<>();
-//                phaseConfigList.add(
-//                        createConstructionHeuristicPhaseConfig(
-//                                ConstructionHeuristicType.FIRST_FIT,
-//                                new TerminationConfig().withSecondsSpentLimit(Long.valueOf("5"))
-//                        ));
-//                phaseConfigList.add(
-//                        createLocalSearchPhaseConfig(
-//                                LocalSearchType.LATE_ACCEPTANCE,
-//                                new TerminationConfig().withMinutesSpentLimit(Long.valueOf("1"))
-//                        ));
-//                phaseConfigList.add(
-//                        createLocalSearchPhaseConfig(
-//                                LocalSearchType.TABU_SEARCH,
-//                                new TerminationConfig().withMinutesSpentLimit(Long.valueOf("1"))
-//                        ));
-//                solverConfig.withPhaseList(phaseConfigList);
 
                 // It's recommended to run for at least 5 minutes ("5m") otherwise.
 //                solverConfig.withTerminationSpentLimit(Duration.ofSeconds(5));
@@ -111,14 +95,20 @@ public class TimeTableApp2 {
         }
 
         // Solve the problem
+        Instant start = Instant.now();
         Solver<TimeTable> solver = solverFactory.buildSolver();
         TimeTable solution = solver.solve(problem);
+        Instant end = Instant.now();
+        Duration timeElapsed = Duration.between(start, end);
+        String formattedDuration = DurationFormatUtils.formatDurationWords(timeElapsed.toMillis(), true, true);
 
         // Visualize the solution
         printTimetable(solution);
 
         if (solution.getScore() != null) {
             LOGGER.info("");
+            LOGGER.info("|" + "------------ solution elapsed time|");
+            LOGGER.info(formattedDuration);
             LOGGER.info("|" + "------------ solution feasible|");
             LOGGER.info(Boolean.toString(solution.getScore().isFeasible()));
             LOGGER.info("|" + "------------ solution score|");
