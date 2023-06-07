@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
-    <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
+<!--    https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#invalidScoreDetection-->
+    <!-- To slowly prove there are no bugs in this code -->
+<!--    <environmentMode>FULL_ASSERT</environmentMode>-->
+<!--    <environmentMode>FAST_ASSERT</environmentMode>-->
     <randomType>MERSENNE_TWISTER</randomType>
     <randomSeed>0</randomSeed>
+    <!-- To solve faster by saturating multiple CPU cores -->
+<!--    <moveThreadCount>AUTO</moveThreadCount>-->
+    <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
 
     <!-- Define the model -->
     <solutionClass>org.acme.schooltimetabling.domain.TimeTable</solutionClass>
@@ -12,7 +18,9 @@
     <!-- Define the score function -->
     <scoreDirectorFactory>
         <constraintProviderClass>org.acme.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
-        <!--    <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>-->
+<!--        https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#initializingScoreTrend-->
+<!--        Most use cases only have negative constraints. Many of those have an InitializingScoreTrend that only goes down:-->
+        <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
     </scoreDirectorFactory>
 
     <!-- Configure the optimization algorithms (optional)
@@ -30,10 +38,8 @@
     -->
     <!-- Optimization algorithms configuration -->
     <termination><!-- Solver termination -->
-        <spentLimit>PT5M</spentLimit>
-<!--        <secondsSpentLimit>5</secondsSpentLimit>-->
-<!--        <minutesSpentLimit>5</minutesSpentLimit>-->
-<!--        <minutesSpentLimit>20</minutesSpentLimit>-->
+        <!-- 2 minutes and 30 seconds in ISO 8601 format P[n]Y[n]M[n]DT[n]H[n]M[n]S -->
+        <spentLimit>PT2M30S</spentLimit>
     </termination>
 
     <!-- Tabu Search performs much better than Late Acceptance (default algo) on this use case -->
@@ -41,9 +47,6 @@
         <!-- First phase: First Fit Decreasing -->
         <termination><!-- Phase termination -->
             <spentLimit>PT5S</spentLimit>
-<!--            <secondsSpentLimit>5</secondsSpentLimit>-->
-<!--            <minutesSpentLimit>1</minutesSpentLimit>-->
-<!--            <minutesSpentLimit>5</minutesSpentLimit>-->
         </termination>
         <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
 <!--        Construction Heuristic phase (0) ended: time spent (693), best score (-1hard/-15soft), score calculation speed (1224/sec), step total (20)-->
@@ -88,7 +91,7 @@
         <termination><!-- Phase termination -->
             <terminationCompositionStyle>AND</terminationCompositionStyle>
 <!--            <spentLimit>PT1M</spentLimit>-->
-            <!--            <bestScoreFeasible>true</bestScoreFeasible>-->
+<!--            <bestScoreFeasible>true</bestScoreFeasible>-->
             <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
             <unimprovedStepCountLimit>100</unimprovedStepCountLimit>
         </termination>
@@ -96,6 +99,8 @@
     </localSearch>
 
 <!--    <localSearch>-->
+<!--        5 sec -->
+<!--        5 min -->
 <!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
 <!--        0hard/6soft-->
 <!--        0hard/11soft-->

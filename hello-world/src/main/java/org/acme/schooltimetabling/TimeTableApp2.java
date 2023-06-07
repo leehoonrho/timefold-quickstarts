@@ -9,7 +9,6 @@ import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristi
 import ai.timefold.solver.core.config.constructionheuristic.ConstructionHeuristicType;
 import ai.timefold.solver.core.config.localsearch.LocalSearchPhaseConfig;
 import ai.timefold.solver.core.config.localsearch.LocalSearchType;
-import ai.timefold.solver.core.config.phase.PhaseConfig;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import org.acme.schooltimetabling.domain.Lesson;
@@ -32,19 +31,19 @@ public class TimeTableApp2 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeTableApp2.class);
 
-    public static void main(String[] args) {
-        boolean createFromXmlResource = true; boolean usePhaseConfig = false; boolean explainScore = true;
-//        boolean createFromXmlResource = false; boolean usePhaseConfig = true; boolean explainScore = true;
-//        boolean createFromXmlResource = false; boolean usePhaseConfig = false; boolean explainScore = false;
+    private static final String SOLVER_CONFIG_NO_CHANGE_PHASE = "org/acme/schooltimetabling/solver/solverConfigNoChangePhase.xml";
+    private static final String SOLVER_CONFIG = "org/acme/schooltimetabling/solver/solverConfig.xml";
 
+    public static void main(String[] args) {
+        boolean createFromXmlResource = true; boolean usePhaseConfig = false;
+//        boolean createFromXmlResource = false; boolean usePhaseConfig = true;
+//        boolean createFromXmlResource = false; boolean usePhaseConfig = false;
 
         SolverFactory<TimeTable> solverFactory;
         if (createFromXmlResource) {
             // https://timefold.ai/xsd/solver/solver.xsd
-            solverFactory = SolverFactory.createFromXmlResource(
-                    "org/acme/schooltimetabling/solver/solverConfig.xml"
-//                    "org/acme/schooltimetabling/solver/solverConfigNoChangePhase.xml"
-            );
+            // solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG_NO_CHANGE_PHASE);
+            solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
         } else {
             if (usePhaseConfig) {
                 SolverConfig solverConfig = new SolverConfig();
@@ -69,9 +68,8 @@ public class TimeTableApp2 {
                 );
 
                 // It's recommended to run for at least 5 minutes ("5m") otherwise.
-//                solverConfig.withTerminationSpentLimit(Duration.ofSeconds(5));
+                // solverConfig.withTerminationSpentLimit(Duration.ofSeconds(5));
                 solverConfig.withTerminationSpentLimit(Duration.ofMinutes(5));
-//                solverConfig.withTerminationSpentLimit(Duration.ofMinutes(20));
                 solverFactory = SolverFactory.create(solverConfig);
             }
             else {
@@ -89,39 +87,25 @@ public class TimeTableApp2 {
 
         // Load the problem
         TimeTable problem = generateDemoData();
-        if (problem.getScore() != null) {
-            LOGGER.info("|" + "------------ problem score|");
-            LOGGER.info(problem.getScore().toString());
-        }
 
         // Solve the problem
         Instant start = Instant.now();
         Solver<TimeTable> solver = solverFactory.buildSolver();
         TimeTable solution = solver.solve(problem);
         Instant end = Instant.now();
-        Duration timeElapsed = Duration.between(start, end);
-        String formattedDuration = DurationFormatUtils.formatDurationWords(timeElapsed.toMillis(), true, true);
+        Duration elapsedTime = Duration.between(start, end);
 
         // Visualize the solution
         printTimetable(solution);
 
-        if (solution.getScore() != null) {
-            LOGGER.info("");
-            LOGGER.info("|" + "------------ solution elapsed time|");
-            LOGGER.info(formattedDuration);
-            LOGGER.info("|" + "------------ solution feasible|");
-            LOGGER.info(Boolean.toString(solution.getScore().isFeasible()));
-            LOGGER.info("|" + "------------ solution score|");
-            LOGGER.info(solution.getScore().toString());
-            if (explainScore) {
-                SolutionManager<TimeTable, HardSoftScore> scoreManager = SolutionManager.create(solverFactory);
-                ScoreExplanation<TimeTable, HardSoftScore> scoreExplanation = scoreManager.explain(solution);
-                LOGGER.info("|" + "------------ score summary|");
-                LOGGER.info(scoreExplanation.getSummary());
-            }
-        }
+        // More info
+        SolutionManager<TimeTable, HardSoftScore> scoreManager = SolutionManager.create(solverFactory);
+        ScoreExplanation<TimeTable, HardSoftScore> scoreExplanation = scoreManager.explain(solution);
+        printScoreSummary(scoreExplanation);
+        printStats(elapsedTime, solution);
 
     }
+
     private static ConstructionHeuristicPhaseConfig createConstructionHeuristicPhaseConfig(
             ConstructionHeuristicType constructionHeuristicType,
             TerminationConfig terminationConfig) {
@@ -130,6 +114,7 @@ public class TimeTableApp2 {
         constructionHeuristicPhaseConfig.setTerminationConfig(terminationConfig);
         return constructionHeuristicPhaseConfig;
     }
+
     private static LocalSearchPhaseConfig createLocalSearchPhaseConfig(
             LocalSearchType localSearchType,
             TerminationConfig terminationConfig) {
@@ -138,57 +123,7 @@ public class TimeTableApp2 {
         localSearchPhaseConfig.setTerminationConfig(terminationConfig);
         return localSearchPhaseConfig;
     }
-    private static List<Timeslot> getTimeslotList() {
-        List<Timeslot> timeslotList = new ArrayList<>(10);
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
 
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
-        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
-
-        return timeslotList;
-    }
-    private static List<Room> getRoomList() {
-        List<Room> roomList = new ArrayList<>(3);
-        roomList.add(new Room("Room A"));
-        roomList.add(new Room("Room B"));
-        roomList.add(new Room("Room C"));
-
-        return roomList;
-    }
-    private static List<Lesson> getLessonList() {
-        List<Lesson> lessonList = new ArrayList<>();
-        long id = 0;
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
-        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "9th grade"));
-        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "9th grade"));
-        lessonList.add(new Lesson(id++, "Biology", "C. Darwin", "9th grade"));
-        lessonList.add(new Lesson(id++, "History", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
-
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
-        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "French", "M. Curie", "10th grade"));
-        lessonList.add(new Lesson(id++, "Geography", "C. Darwin", "10th grade"));
-        lessonList.add(new Lesson(id++, "History", "I. Jones", "10th grade"));
-        lessonList.add(new Lesson(id++, "English", "P. Cruz", "10th grade"));
-        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "10th grade"));
-
-        return lessonList;
-    }
     public static TimeTable generateDemoData() {
         List<Timeslot> timeslotList = getTimeslotList();
         List<Room> roomList = getRoomList();
@@ -196,6 +131,7 @@ public class TimeTableApp2 {
 
         return new TimeTable(timeslotList, roomList, lessonList);
     }
+
     private static void printTimetable(TimeTable timeTable) {
        LOGGER.info("");
         List<Room> roomList = timeTable.getRoomList();
@@ -245,6 +181,77 @@ public class TimeTableApp2 {
                 LOGGER.info("  " + lesson.getSubject() + " - " + lesson.getTeacher() + " - " + lesson.getStudentGroup());
             }
         }
+    }
+
+    private static void printScoreSummary(ScoreExplanation<TimeTable, HardSoftScore> scoreExplanation) {
+        LOGGER.info("");
+        LOGGER.info("|" + "------------ score summary ------------|");
+        LOGGER.info("| " + scoreExplanation.getSummary());
+    }
+
+    private static void printStats(Duration elapsedTime, TimeTable timeTable) {
+        String formattedDuration = DurationFormatUtils.formatDurationWords(elapsedTime.toMillis(), true, true);
+        LOGGER.info("");
+        LOGGER.info("|" + "------------ solution elapsed time ----|");
+        LOGGER.info("| " + formattedDuration);
+        LOGGER.info("|" + "------------ solution feasible --------|");
+        LOGGER.info("| " + timeTable.getScore().isFeasible());
+        LOGGER.info("|" + "------------ solution score -----------|");
+        LOGGER.info("| " + timeTable.getScore().toString());
+    }
+
+    private static List<Timeslot> getTimeslotList() {
+        List<Timeslot> timeslotList = new ArrayList<>(10);
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.MONDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
+
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(8, 30), LocalTime.of(9, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(10, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(10, 30), LocalTime.of(11, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(13, 30), LocalTime.of(14, 30)));
+        timeslotList.add(new Timeslot(DayOfWeek.TUESDAY, LocalTime.of(14, 30), LocalTime.of(15, 30)));
+
+        return timeslotList;
+    }
+
+    private static List<Room> getRoomList() {
+        List<Room> roomList = new ArrayList<>(3);
+        roomList.add(new Room("Room A"));
+        roomList.add(new Room("Room B"));
+        roomList.add(new Room("Room C"));
+
+        return roomList;
+    }
+
+    private static List<Lesson> getLessonList() {
+        List<Lesson> lessonList = new ArrayList<>();
+        long id = 0;
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "9th grade"));
+        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "9th grade"));
+        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "9th grade"));
+        lessonList.add(new Lesson(id++, "Biology", "C. Darwin", "9th grade"));
+        lessonList.add(new Lesson(id++, "History", "I. Jones", "9th grade"));
+        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
+        lessonList.add(new Lesson(id++, "English", "I. Jones", "9th grade"));
+        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
+        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "9th grade"));
+
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
+        lessonList.add(new Lesson(id++, "Math", "A. Turing", "10th grade"));
+        lessonList.add(new Lesson(id++, "Physics", "M. Curie", "10th grade"));
+        lessonList.add(new Lesson(id++, "Chemistry", "M. Curie", "10th grade"));
+        lessonList.add(new Lesson(id++, "French", "M. Curie", "10th grade"));
+        lessonList.add(new Lesson(id++, "Geography", "C. Darwin", "10th grade"));
+        lessonList.add(new Lesson(id++, "History", "I. Jones", "10th grade"));
+        lessonList.add(new Lesson(id++, "English", "P. Cruz", "10th grade"));
+        lessonList.add(new Lesson(id++, "Spanish", "P. Cruz", "10th grade"));
+
+        return lessonList;
     }
 
 }
