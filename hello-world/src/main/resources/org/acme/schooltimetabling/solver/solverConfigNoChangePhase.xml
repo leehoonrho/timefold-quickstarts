@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
+    <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
+    <randomType>MERSENNE_TWISTER</randomType>
+    <randomSeed>0</randomSeed>
+
+    <!-- Define the model -->
+    <solutionClass>org.acme.schooltimetabling.domain.TimeTable</solutionClass>
+    <entityClass>org.acme.schooltimetabling.domain.Lesson</entityClass>
+
+    <!-- Define the score function -->
+    <scoreDirectorFactory>
+        <constraintProviderClass>org.acme.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
+        <!--    <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>-->
+    </scoreDirectorFactory>
+
+    <noChangePhase/>
+</solver>
