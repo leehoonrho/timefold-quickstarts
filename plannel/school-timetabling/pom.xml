@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.acme</groupId>
-  <artifactId>timefold-solver-hello-world-school-timetabling-quickstart</artifactId>
+  <groupId>com.plannel</groupId>
+  <artifactId>timefold-solver-plannel-quickstart</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
@@ -55,6 +55,11 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
     </dependency>
 
     <!-- Testing -->
@@ -116,7 +121,7 @@
           </descriptors>
           <archive>
             <manifestEntries>
-              <Main-Class>org.acme.schooltimetabling.TimeTableApp</Main-Class>
+              <Main-Class>com.plannel.schooltimetabling.TimeTableApp</Main-Class>
               <Multi-Release>true</Multi-Release> <!-- Some of our dependencies are multi-release JARs. -->
             </manifestEntries>
           </archive>

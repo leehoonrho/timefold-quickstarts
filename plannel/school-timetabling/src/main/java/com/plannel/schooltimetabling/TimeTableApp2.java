@@ -1,4 +1,4 @@
-package org.acme.schooltimetabling;
+package com.plannel.schooltimetabling;
 
 import ai.timefold.solver.core.api.score.ScoreExplanation;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -11,11 +11,11 @@ import ai.timefold.solver.core.config.localsearch.LocalSearchPhaseConfig;
 import ai.timefold.solver.core.config.localsearch.LocalSearchType;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
-import org.acme.schooltimetabling.domain.Lesson;
-import org.acme.schooltimetabling.domain.Room;
-import org.acme.schooltimetabling.domain.TimeTable;
-import org.acme.schooltimetabling.domain.Timeslot;
-import org.acme.schooltimetabling.solver.TimeTableConstraintProvider;
+import com.plannel.schooltimetabling.domain.Lesson;
+import com.plannel.schooltimetabling.domain.Room;
+import com.plannel.schooltimetabling.domain.TimeTable;
+import com.plannel.schooltimetabling.domain.Timeslot;
+import com.plannel.schooltimetabling.solver.TimeTableConstraintProvider;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,8 @@ public class TimeTableApp2 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TimeTableApp2.class);
 
-    private static final String SOLVER_CONFIG_NO_CHANGE_PHASE = "org/acme/schooltimetabling/solver/solverConfigNoChangePhase.xml";
-    private static final String SOLVER_CONFIG = "org/acme/schooltimetabling/solver/solverConfig.xml";
+    private static final String SOLVER_CONFIG_NO_CHANGE_PHASE = "com.plannel.schooltimetabling.solver/solverConfigNoChangePhase.xml";
+    private static final String SOLVER_CONFIG = "com.plannel.schooltimetabling.solver/solverConfig.xml";
 
     public static void main(String[] args) {
         boolean createFromXmlResource = true; boolean usePhaseConfig = false;

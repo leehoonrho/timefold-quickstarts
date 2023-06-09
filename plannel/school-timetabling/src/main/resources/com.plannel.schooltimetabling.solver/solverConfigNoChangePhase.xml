@@ -6,12 +6,12 @@
     <randomSeed>0</randomSeed>
 
     <!-- Define the model -->
-    <solutionClass>org.acme.schooltimetabling.domain.TimeTable</solutionClass>
-    <entityClass>org.acme.schooltimetabling.domain.Lesson</entityClass>
+    <solutionClass>com.plannel.schooltimetabling.domain.TimeTable</solutionClass>
+    <entityClass>com.plannel.schooltimetabling.domain.Lesson</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>
-        <constraintProviderClass>org.acme.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
+        <constraintProviderClass>com.plannel.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
         <!--    <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>-->
     </scoreDirectorFactory>
 

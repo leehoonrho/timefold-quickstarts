@@ -12,12 +12,12 @@
     <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
 
     <!-- Define the model -->
-    <solutionClass>org.acme.schooltimetabling.domain.TimeTable</solutionClass>
-    <entityClass>org.acme.schooltimetabling.domain.Lesson</entityClass>
+    <solutionClass>com.plannel.schooltimetabling.domain.TimeTable</solutionClass>
+    <entityClass>com.plannel.schooltimetabling.domain.Lesson</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>
-        <constraintProviderClass>org.acme.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
+        <constraintProviderClass>com.plannel.schooltimetabling.solver.TimeTableConstraintProvider</constraintProviderClass>
 <!--        https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#initializingScoreTrend-->
 <!--        Most use cases only have negative constraints. Many of those have an InitializingScoreTrend that only goes down:-->
         <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
@@ -58,17 +58,17 @@
 <!--        Construction Heuristic phase (0) ended: time spent (2011), best score (-1hard/-7soft), score calculation speed (3610/sec), step total (20).-->
 <!--ERROR-->
 <!--        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>-->
-<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class org.acme.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
 <!--        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>-->
-<!--        The sorterManner (INCREASING_STRENGTH) on entity class (class org.acme.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
+<!--        The sorterManner (INCREASING_STRENGTH) on entity class (class com.plannel.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
 <!--        <constructionHeuristicType>WEAKEST_FIT_DECREASING</constructionHeuristicType>-->
-<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class org.acme.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
 <!--        <constructionHeuristicType>STRONGEST_FIT</constructionHeuristicType>-->
-<!--        The sorterManner (DECREASING_STRENGTH) on entity class (class org.acme.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
+<!--        The sorterManner (DECREASING_STRENGTH) on entity class (class com.plannel.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
 <!--        <constructionHeuristicType>STRONGEST_FIT_DECREASING</constructionHeuristicType>-->
-<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class org.acme.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+<!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
 <!--        <constructionHeuristicType>ALLOCATE_TO_VALUE_FROM_QUEUE</constructionHeuristicType>-->
-<!--        The config (QueuedValuePlacerConfig(null, null)) has no configured variableName for entityClass (class org.acme.schooltimetabling.domain.Lesson) and because there are multiple variableNames ([room, timeslot]), it cannot be deduced automatically.-->
+<!--        The config (QueuedValuePlacerConfig(null, null)) has no configured variableName for entityClass (class com.plannel.schooltimetabling.domain.Lesson) and because there are multiple variableNames ([room, timeslot]), it cannot be deduced automatically.-->
     </constructionHeuristic>
 <!--    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse-->
 <!--    https://stackoverflow.com/questions/36802284/optaplanner-how-to-specify-multiple-algorithms-->

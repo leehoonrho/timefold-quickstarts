@@ -16,6 +16,7 @@
   <name>Timefold Solver Quickstarts</name>
 
   <modules>
+    <module>plannel/school-timetabling</module>
     <module>hello-world</module>
     <module>technology/java-spring-boot</module>
     <module>technology/java-activemq-quarkus</module>
