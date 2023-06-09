@@ -5,6 +5,17 @@
 
   <groupId>com.plannel</groupId>
   <artifactId>timefold-solver-plannel-quickstart</artifactId>
+  <name>Timefold Solver Plannel Prototype</name>
+  <description>
+    Plannel Prototype for Timefold Solver.
+    This module contains the examples which demonstrate how to use it in a normal Java application.
+
+    1. Solve with multiple algos
+    2. Benchmark
+    3. Plannel Modeling
+    3. Score Calculation
+  </description>
+  <url>https://plannel.ai</url>
   <version>1.0-SNAPSHOT</version>
 
   <properties>

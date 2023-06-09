@@ -17,6 +17,7 @@
 
   <modules>
     <module>plannel/school-timetabling</module>
+    <module>examples</module>
     <module>hello-world</module>
     <module>technology/java-spring-boot</module>
     <module>technology/java-activemq-quarkus</module>
