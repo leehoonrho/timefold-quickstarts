@@ -12,6 +12,17 @@ import ai.timefold.solver.persistence.common.api.domain.solution.SolutionFileIO;
 public class CloudBalancingApp extends CommonApp<CloudBalance> {
 
     public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.02min.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.05min.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.10min.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked1.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked2.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked3.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked4.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked-partition1.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked-partition2.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked-partition3.xml";
+//    public static final String SOLVER_CONFIG = "ai/timefold/solver/examples/cloudbalancing/cloudBalancingSolverConfig.fixed-random.tweaked-partition4.xml";
 
     public static final String DATA_DIR_NAME = "cloudbalancing";
 
