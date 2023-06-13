@@ -55,6 +55,19 @@ public class CloudBalancingBenchmarkHelloWorld {
         benchmark.benchmarkAndShowReportInBrowser();
 
         // Show aggregator to aggregate multiple reports
+//        Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.io.File.equals(Object)" because "this.problemFile" is null
+//        at ai.timefold.solver.benchmark.impl.loader.FileProblemProvider.equals(FileProblemProvider.java:60)
+//        at ai.timefold.solver.benchmark.impl.result.ProblemBenchmarkResult.equals(ProblemBenchmarkResult.java:478)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.initSingleBenchmarkNodes(BenchmarkAggregatorFrame.java:482)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.initBenchmarkHierarchy(BenchmarkAggregatorFrame.java:458)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.createCheckBoxTree(BenchmarkAggregatorFrame.java:217)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.createBenchmarkTreePanel(BenchmarkAggregatorFrame.java:200)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.createContentPane(BenchmarkAggregatorFrame.java:149)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.init(BenchmarkAggregatorFrame.java:141)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.createAndDisplay(BenchmarkAggregatorFrame.java:109)
+//        at ai.timefold.solver.benchmark.impl.aggregator.swingui.BenchmarkAggregatorFrame.createAndDisplayFromXmlResource(BenchmarkAggregatorFrame.java:74)
+//        at ai.timefold.solver.examples.cloudbalancing.optional.benchmark.CloudBalancingBenchmarkHelloWorld.runAdvancedBenchmark(CloudBalancingBenchmarkHelloWorld.java:59)
+//        at ai.timefold.solver.examples.cloudbalancing.optional.benchmark.CloudBalancingBenchmarkHelloWorld.main(CloudBalancingBenchmarkHelloWorld.java:24)
         if (aggregator) {
             BenchmarkAggregatorFrame.createAndDisplayFromXmlResource(
                     "ai/timefold/solver/examples/cloudbalancing/optional/benchmark/cloudBalancingBenchmarkConfig.xml");
