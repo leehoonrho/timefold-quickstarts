@@ -39,14 +39,87 @@
     <!-- Optimization algorithms configuration -->
     <termination><!-- Solver termination -->
         <!-- 2 minutes and 30 seconds in ISO 8601 format P[n]Y[n]M[n]DT[n]H[n]M[n]S -->
-<!--        <spentLimit>PT2M30S</spentLimit>-->
-<!--        <spentLimit>PT5S</spentLimit>-->
-        <spentLimit>PT5M</spentLimit>
+        <spentLimit>PT2M30S</spentLimit>
     </termination>
 
-    <!-- Tabu Search performs much better than Late Acceptance (default algo) on this use case -->
-    <constructionHeuristic>
-        <!-- First phase: First Fit Decreasing -->
+    <constructionHeuristic/>
+
+<!--  https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse-->
+
+<!--  # Simple single algorithms    -->
+<!--    <localSearch>-->
+<!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+<!--    </localSearch>-->
+<!--    Simple Late Acceptance Only-->
+    <!--    # solution elapsed time-->
+    <!--    2 minutes 30 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--     0hard/11soft-->
+<!--    <localSearch>-->
+<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+<!--    </localSearch>-->
+<!--    Simple Tabu Search Only-->
+    <!--    # solution elapsed time-->
+    <!--    2 minutes 30 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--     0hard/10soft-->
+
+<!--  https://stackoverflow.com/questions/36802284/optaplanner-how-to-specify-multiple-algorithms-->
+<!--  https://stackoverflow.com/questions/60415436/how-can-i-configurate-the-late-acceptance-algorithm-->
+    <!--# Sequence-->
+    <!-- Second phase: Late Acceptance -->
+    <localSearch>
+        <termination><!-- Phase termination -->
+            <terminationCompositionStyle>AND</terminationCompositionStyle>
+<!--            <spentLimit>PT1M</spentLimit>-->
+<!--            <bestScoreFeasible>true</bestScoreFeasible>-->
+            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
+            <unimprovedStepCountLimit>1000</unimprovedStepCountLimit>
+        </termination>
+        <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    </localSearch>
+    <!-- Third phase: Tabu Search-->
+    <localSearch>
+        <termination><!-- Phase termination -->
+            <terminationCompositionStyle>AND</terminationCompositionStyle>
+<!--            <spentLimit>PT1M</spentLimit>-->
+<!--            <bestScoreFeasible>true</bestScoreFeasible>-->
+            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
+            <unimprovedStepCountLimit>1000</unimprovedStepCountLimit>
+        </termination>
+        <localSearchType>TABU_SEARCH</localSearchType>
+    </localSearch>
+<!--    Late Acceptance + Tabu Search-->
+    <!--    # solution elapsed time-->
+    <!--    1 minute 2 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/11soft-->
+<!--    Late Acceptance Only-->
+    <!--    # solution elapsed time-->
+    <!--    32 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/11soft-->
+<!--    Tabu Search Only-->
+    <!--    # solution elapsed time-->
+    <!--    31 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/10soft-->
+
+<!--    <termination>&lt;!&ndash; Solver termination &ndash;&gt;-->
+<!--        <spentLimit>PT5S</spentLimit>-->
+<!--        <spentLimit>PT5M</spentLimit>-->
+<!--    </termination>-->
+<!--    https://timefold.ai/docs/timefold-solver/latest/construction-heuristics/construction-heuristics.html--><!--    <constructionHeuristic>-->
 <!--        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>-->
 <!--        Construction Heuristic phase (0) ended: time spent (693), best score (-1hard/-15soft), score calculation speed (1224/sec), step total (20)-->
 <!--        <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>-->
@@ -68,41 +141,9 @@
 <!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
 <!--        <constructionHeuristicType>ALLOCATE_TO_VALUE_FROM_QUEUE</constructionHeuristicType>-->
 <!--        The config (QueuedValuePlacerConfig(null, null)) has no configured variableName for entityClass (class com.plannel.schooltimetabling.domain.Lesson) and because there are multiple variableNames ([room, timeslot]), it cannot be deduced automatically.-->
-    </constructionHeuristic>
-<!--    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse-->
-<!--    https://stackoverflow.com/questions/36802284/optaplanner-how-to-specify-multiple-algorithms-->
-<!--    https://stackoverflow.com/questions/60415436/how-can-i-configurate-the-late-acceptance-algorithm-->
-
-    <!--# Sequence-->
-    <!-- Second phase: Late Acceptance -->
-<!--    <localSearch>-->
-<!--        <termination>&lt;!&ndash; Phase termination &ndash;&gt;-->
-<!--            <terminationCompositionStyle>AND</terminationCompositionStyle>-->
-<!--&lt;!&ndash;            <spentLimit>PT1M</spentLimit>&ndash;&gt;-->
-<!--&lt;!&ndash;            <bestScoreFeasible>true</bestScoreFeasible>&ndash;&gt;-->
-<!--            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>-->
-<!--            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>-->
-<!--        </termination>-->
-<!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
-<!--    </localSearch>-->
-<!--    &lt;!&ndash; Third phase: Tabu Search &ndash;&gt;-->
-<!--    <localSearch>-->
-<!--        <termination>&lt;!&ndash; Phase termination &ndash;&gt;-->
-<!--            <terminationCompositionStyle>AND</terminationCompositionStyle>-->
-<!--&lt;!&ndash;            <spentLimit>PT1M</spentLimit>&ndash;&gt;-->
-<!--&lt;!&ndash;            <bestScoreFeasible>true</bestScoreFeasible>&ndash;&gt;-->
-<!--            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>-->
-<!--            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>-->
-<!--        </termination>-->
-<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
-<!--    </localSearch>-->
-
+<!--    </constructionHeuristic>-->
 <!--    https://timefold.ai/docs/timefold-solver/latest/local-search/local-search.html-->
-<!--    <termination>&lt;!&ndash; Solver termination &ndash;&gt;-->
-<!--        <spentLimit>PT5S</spentLimit>-->
-<!--        <spentLimit>PT5M</spentLimit>-->
-<!--    </termination>-->
-    <localSearch>
+<!--    <localSearch>-->
 <!--        5 sec -->
 <!--        5 min -->
 <!--        # Hill climbing (simple local search)-->
@@ -149,7 +190,8 @@
 <!--        0hard/11soft-->
 <!--        0hard/11soft-->
 <!--        # Variable neighborhood descent-->
-        <localSearchType>VARIABLE_NEIGHBORHOOD_DESCENT</localSearchType>
+<!--        <localSearchType>VARIABLE_NEIGHBORHOOD_DESCENT</localSearchType>-->
 <!--        0hard/10soft-->
-    </localSearch>
+<!--        0hard/10soft-->
+<!--    </localSearch>-->
 </solver>
