@@ -35,16 +35,18 @@ public class TimeTableApp2 {
     private static final String SOLVER_CONFIG = "com.plannel.schooltimetabling.solver/solverConfig.xml";
 
     public static void main(String[] args) {
-        boolean createFromXmlResource = true; boolean usePhaseConfig = false;
-//        boolean createFromXmlResource = false; boolean usePhaseConfig = true;
-//        boolean createFromXmlResource = false; boolean usePhaseConfig = false;
+        boolean createSolverByXML = true; boolean usePhaseConfig = false;
+//        boolean createSolverByXML = false; boolean usePhaseConfig = true;
+//        boolean createSolverByXML = false; boolean usePhaseConfig = false;
 
         SolverFactory<TimeTable> solverFactory;
-        if (createFromXmlResource) {
+        if (createSolverByXML) {
             // https://timefold.ai/xsd/solver/solver.xsd
             // solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG_NO_CHANGE_PHASE);
             solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
-        } else {
+        }
+        // create solver by Java API
+        else {
             if (usePhaseConfig) {
                 SolverConfig solverConfig = new SolverConfig();
                 solverConfig.withSolutionClass(TimeTable.class);
@@ -72,6 +74,7 @@ public class TimeTableApp2 {
                 solverConfig.withTerminationSpentLimit(Duration.ofMinutes(5));
                 solverFactory = SolverFactory.create(solverConfig);
             }
+            // default solver
             else {
                 solverFactory = SolverFactory.create(new SolverConfig()
                         .withSolutionClass(TimeTable.class)

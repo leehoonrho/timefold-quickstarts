@@ -39,15 +39,14 @@
     <!-- Optimization algorithms configuration -->
     <termination><!-- Solver termination -->
         <!-- 2 minutes and 30 seconds in ISO 8601 format P[n]Y[n]M[n]DT[n]H[n]M[n]S -->
-        <spentLimit>PT2M30S</spentLimit>
+<!--        <spentLimit>PT2M30S</spentLimit>-->
+<!--        <spentLimit>PT5S</spentLimit>-->
+        <spentLimit>PT5M</spentLimit>
     </termination>
 
     <!-- Tabu Search performs much better than Late Acceptance (default algo) on this use case -->
     <constructionHeuristic>
         <!-- First phase: First Fit Decreasing -->
-<!--        <termination>&lt;!&ndash; Phase termination &ndash;&gt;-->
-<!--            <spentLimit>PT5S</spentLimit>-->
-<!--        </termination>-->
 <!--        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>-->
 <!--        Construction Heuristic phase (0) ended: time spent (693), best score (-1hard/-15soft), score calculation speed (1224/sec), step total (20)-->
 <!--        <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>-->
@@ -76,47 +75,81 @@
 
     <!--# Sequence-->
     <!-- Second phase: Late Acceptance -->
-    <localSearch>
-        <termination><!-- Phase termination -->
-            <terminationCompositionStyle>AND</terminationCompositionStyle>
-<!--            <spentLimit>PT1M</spentLimit>-->
-<!--            <bestScoreFeasible>true</bestScoreFeasible>-->
-            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
-            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>
-        </termination>
-        <localSearchType>LATE_ACCEPTANCE</localSearchType>
-    </localSearch>
-    <!-- Third phase: Tabu Search -->
-    <localSearch>
-        <termination><!-- Phase termination -->
-            <terminationCompositionStyle>AND</terminationCompositionStyle>
-<!--            <spentLimit>PT1M</spentLimit>-->
-<!--            <bestScoreFeasible>true</bestScoreFeasible>-->
-            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
-            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>
-        </termination>
-        <localSearchType>TABU_SEARCH</localSearchType>
-    </localSearch>
-
 <!--    <localSearch>-->
+<!--        <termination>&lt;!&ndash; Phase termination &ndash;&gt;-->
+<!--            <terminationCompositionStyle>AND</terminationCompositionStyle>-->
+<!--&lt;!&ndash;            <spentLimit>PT1M</spentLimit>&ndash;&gt;-->
+<!--&lt;!&ndash;            <bestScoreFeasible>true</bestScoreFeasible>&ndash;&gt;-->
+<!--            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>-->
+<!--            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>-->
+<!--        </termination>-->
+<!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+<!--    </localSearch>-->
+<!--    &lt;!&ndash; Third phase: Tabu Search &ndash;&gt;-->
+<!--    <localSearch>-->
+<!--        <termination>&lt;!&ndash; Phase termination &ndash;&gt;-->
+<!--            <terminationCompositionStyle>AND</terminationCompositionStyle>-->
+<!--&lt;!&ndash;            <spentLimit>PT1M</spentLimit>&ndash;&gt;-->
+<!--&lt;!&ndash;            <bestScoreFeasible>true</bestScoreFeasible>&ndash;&gt;-->
+<!--            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>-->
+<!--            <unimprovedStepCountLimit>100</unimprovedStepCountLimit>-->
+<!--        </termination>-->
+<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+<!--    </localSearch>-->
+
+<!--    https://timefold.ai/docs/timefold-solver/latest/local-search/local-search.html-->
+<!--    <termination>&lt;!&ndash; Solver termination &ndash;&gt;-->
+<!--        <spentLimit>PT5S</spentLimit>-->
+<!--        <spentLimit>PT5M</spentLimit>-->
+<!--    </termination>-->
+    <localSearch>
 <!--        5 sec -->
 <!--        5 min -->
-<!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
-<!--        0hard/6soft-->
-<!--        0hard/11soft-->
-<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
-<!--        0hard/9soft-->
-<!--        0hard/10soft-->
-<!--        <localSearchType>VARIABLE_NEIGHBORHOOD_DESCENT</localSearchType>-->
-<!--        0hard/10soft-->
-<!--        0hard/10soft-->
+<!--        # Hill climbing (simple local search)-->
 <!--        <localSearchType>HILL_CLIMBING</localSearchType>-->
 <!--        0hard/6soft-->
 <!--        0hard/6soft-->
+<!--        # Tabu search-->
+<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+<!--        0hard/10soft-->
+<!--        0hard/10soft-->
+<!--        # Simulated annealing-->
 <!--        <localSearchType>SIMULATED_ANNEALING</localSearchType>-->
 <!--        The acceptorType (SIMULATED_ANNEALING) currently requires a acceptorConfig.getSimulatedAnnealingStartingTemperature() (null).-->
+<!--        # Late acceptance-->
+<!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+<!--        0hard/11soft-->
+<!--        0hard/11soft-->
+<!--        # Great Deluge-->
 <!--        <localSearchType>GREAT_DELUGE</localSearchType>-->
-<!--        0hard/-4soft-->
-<!--        0hard/2soft-->
-<!--    </localSearch>-->
+<!--        0hard/0soft-->
+<!--        0hard/6soft-->
+<!--        # Step counting hill climbing-->
+<!--        <acceptor>-->
+<!--            <stepCountingHillClimbingSize>400</stepCountingHillClimbingSize>-->
+<!--        </acceptor>-->
+<!--        <forager>-->
+<!--            <acceptedCountLimit>1</acceptedCountLimit>-->
+<!--        </forager>-->
+<!--        0hard/9soft-->
+<!--        0hard/9soft-->
+<!--        # Strategic oscillation-->
+<!--        The following finalistPodiumTypes are supported:-->
+<!--        HIGHEST_SCORE (default): Pick the accepted move with the highest score.-->
+<!--        STRATEGIC_OSCILLATION: Alias for the default strategic oscillation variant.-->
+<!--        STRATEGIC_OSCILLATION_BY_LEVEL: If there is an accepted improving move, pick it. If no such move exists, prefer an accepted move which improves a softer score level over one that doesn’t (even if it has a better harder score level). A move is improving if it’s better than the last completed step score.-->
+<!--        STRATEGIC_OSCILLATION_BY_LEVEL_ON_BEST_SCORE: Like STRATEGIC_OSCILLATION_BY_LEVEL, but define improving as better than the best score (instead of the last completed step score).-->
+<!--        <acceptor>-->
+<!--            <entityTabuSize>7</entityTabuSize>-->
+<!--        </acceptor>-->
+<!--        <forager>-->
+<!--            <acceptedCountLimit>1000</acceptedCountLimit>-->
+<!--            <finalistPodiumType>STRATEGIC_OSCILLATION</finalistPodiumType>-->
+<!--        </forager>-->
+<!--        0hard/11soft-->
+<!--        0hard/11soft-->
+<!--        # Variable neighborhood descent-->
+        <localSearchType>VARIABLE_NEIGHBORHOOD_DESCENT</localSearchType>
+<!--        0hard/10soft-->
+    </localSearch>
 </solver>
