@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2023-06-21_153018 Planner benchmark report</title>
+
+    <link href="website/webjars/timefold/img/timefold-favicon.svg" rel="icon" type="image/svg+xml">
+    <link href="website/webjars/timefold/img/timefold-favicon.svg" rel="mask-icon" color="#000000">
+
+    <link href="website/css/app.css" rel="stylesheet"/>
+    <link href="website/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="website/webjars/timefold/css/timefold-webui.css" rel="stylesheet" />
+    <link href="website/css/prettify.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" /> 
+
+    <script src="https://buttons.github.io/buttons.js"></script>
+    <script src="website/js/app.js"></script> 
+    <script src="website/webjars/jquery/jquery.min.js"></script>
+    <script src="website/webjars/bootstrap/js/bootstrap.bundle.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0"></script>
+    <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot@4.2.0"></script>
+    <script src="website/js/chartjs-plugin-watermark.js"></script>
+    <script src="website/js/prettify.js"></script>
+</head>
+<body onload="prettyPrint()">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-black shadow">
+        <div class="container">
+            <div class="text-white">
+                <a href="#" class="navbar-brand">
+                    <img src="website/webjars/timefold/img/timefold-logo-horizontal-negative.svg" alt="Timefold Logo (horizontal, negative)">
+                </a>
+                <br />
+                Benchmark Report
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Summary
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#summary_result">Results</a></li>
+                            <li><a class="dropdown-item" href="#summary_performance">Performance</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Problems
+                        </a>
+                        <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#problemBenchmark_24tasks-002D8employees">&nbsp;24tasks-8employees</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_50tasks-002D5employees">&nbsp;50tasks-5employees</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_100tasks-002D5employees">&nbsp;100tasks-5employees</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_500tasks-002D20employees">&nbsp;500tasks-20employees</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#solverBenchmarkResult">Solvers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#environmentInformation">Environment</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="d-inline-flex align-items-center">
+                        <span class="mx-1" style="position:relative; top:3px;"><a class="github-button" aria-label="Star Timefold on GitHub" href="https://github.com/TimefoldAI/timefold-solver" data-show-count="true" data-color-scheme="no-preference: dark; light: dark; dark: dark;">Star</a></span>
+                        <a class="mx-1" href="https://stackoverflow.com/questions/tagged/timefold"><i class="fa-brands fa-stack-overflow text-white"></i></a>
+                        <a class="mx-1" href="https://youtube.com/@timefold"><i class="fa-brands fa-youtube text-white"></i></a>
+                        <a class="mx-1" href="https://twitter.com/TimefoldAI"><i class="fa-brands fa-twitter text-white"></i></a>
+                        <a role="button" class="btn btn-sm tf-btn-contact btn-outline-light mx-1" href="https://timefold.ai/company/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid p-2 w-75"> <!-- Content -->
+        <header class="visually-hidden">
+            <h1>Timefold Benchmark report</h1>
+        </header>
+
+        <section id="summary_result">
+            <h2>Result summary</h2>
+            <div class="tabbable">
+                <ul class="nav nav-pills justify-content-center">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="summary_bestScore-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScore-tab-pane" type="button">Best score</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_bestScoreScalability-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability-tab-pane" type="button">Best score scalability</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_bestScoreDistribution-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution-tab-pane" type="button">Best score distribution</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_winningScoreDifference-tab" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference-tab-pane" type="button">Winning score difference</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_worstScoreDifferencePercentage-tab" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage-tab-pane" type="button">Worst score difference percentage (ROI)</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-2">
+                    <div class="tab-pane show active" id="summary_bestScore-tab-pane">
+                        <h3 class="visually-hidden">Best score summary</h3>
+                        <p>Useful for visualizing the best solver configuration.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_bestScore_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart0_2a013"></canvas>
+        <script async src="website/js/bestScoreSummaryChart0_2a013.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScore_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart1_fa4f"></canvas>
+        <script async src="website/js/bestScoreSummaryChart1_fa4f.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScore_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart2_82a29"></canvas>
+        <script async src="website/js/bestScoreSummaryChart2_82a29.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScore_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart3_cb394"></canvas>
+        <script async src="website/js/bestScoreSummaryChart3_cb394.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_bestScore_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart4_28dad"></canvas>
+        <script async src="website/js/bestScoreSummaryChart4_28dad.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Total</th>
+                                        <th rowspan="2">Average</th>
+                                        <th rowspan="2">Standard Deviation</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>24tasks-8employees</th>
+                                        <th>50tasks-5employees</th>
+                                        <th>100tasks-5employees</th>
+                                        <th>500tasks-20employees</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                            <td>[0]hard/[-60622/-87578488/-179935/-324586]soft</td>
+                                            <td>[0]hard/[-15156/-21894622/-44984/-81147]soft</td>
+                                            <td>0.0E0/19234.38/2.24E7/53670.95/91788.28</td>
+                                                            <td>[0]hard/[-494/-836426/-1909/-3203]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>[0]hard/[-3925/-6293940/-7772/-20463]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>[0]hard/[-8057/-22133498/-34832/-65802]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>[0]hard/[-48146/-58314624/-135422/-235118]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScoreScalability-tab-pane">
+                        <h3 class="visually-hidden">Best score scalability summary</h3>
+                        <p>Useful for visualizing the scalability of each solver configuration.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_bestScoreScalability_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart0_39172"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart0_39172.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreScalability_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart1_3462"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart1_3462.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreScalability_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart2_77c74"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart2_77c74.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreScalability_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart3_1a600"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart3_1a600.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_bestScoreScalability_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart4_7b577"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart4_7b577.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScoreDistribution-tab-pane">
+                        <h3 class="visually-hidden">Best score distribution summary</h3>
+                        <p>Useful for visualizing the reliability of each solver configuration.</p>
+                            <div class="alert alert-info">
+                                <p>Benchmarker did not run multiple subSingles, so there is no distribution and therefore no reliability indication.</p>
+                            </div>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_bestScoreDistribution_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart0_5ca6b"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart0_5ca6b.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreDistribution_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart1_b32d0"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart1_b32d0.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreDistribution_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart2_ce13"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart2_ce13.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreDistribution_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart3_77d60"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart3_77d60.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_bestScoreDistribution_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart4_1db73"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart4_1db73.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_winningScoreDifference-tab-pane">
+                        <h3 class="visually-hidden">Winning score difference summary</h3>
+                        <p>Useful for zooming in on the results of the best score summary.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_winningScoreDifference_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart0_64a0e"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart0_64a0e.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_winningScoreDifference_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart1_1c4c0"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart1_1c4c0.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_winningScoreDifference_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart2_b8d8e"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart2_b8d8e.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_winningScoreDifference_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart3_61178"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart3_61178.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_winningScoreDifference_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart4_a606c"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart4_a606c.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Total</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>24tasks-8employees</th>
+                                        <th>50tasks-5employees</th>
+                                        <th>100tasks-5employees</th>
+                                        <th>500tasks-20employees</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                            <td>[0]hard/[0/0/0/0]soft</td>
+                                            <td>[0]hard/[0/0/0/0]soft</td>
+                                                        <td>[0]hard/[0/0/0/0]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>[0]hard/[0/0/0/0]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>[0]hard/[0/0/0/0]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>[0]hard/[0/0/0/0]soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_worstScoreDifferencePercentage-tab-pane">
+                        <h3 class="visually-hidden">Worst score difference percentage summary (ROI)</h3>
+                        <p>Useful for visualizing the return on investment (ROI) to decision makers.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_worstScoreDifferencePercentage_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart0_22adb"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart0_22adb.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_worstScoreDifferencePercentage_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart1_442c4"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart1_442c4.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_worstScoreDifferencePercentage_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart2_50ec7"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart2_50ec7.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_worstScoreDifferencePercentage_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart3_cb818"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart3_cb818.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_worstScoreDifferencePercentage_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart4_2a375"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart4_2a375.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>24tasks-8employees</th>
+                                        <th>50tasks-5employees</th>
+                                        <th>100tasks-5employees</th>
+                                        <th>500tasks-20employees</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                                <td>0.00%/0.00%/0.00%/0.00%/0.00%</td>
+                                                        <td>0.00%/0.00%/0.00%/0.00%/0.00%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0.00%/0.00%/0.00%/0.00%/0.00%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0.00%/0.00%/0.00%/0.00%/0.00%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0.00%/0.00%/0.00%/0.00%/0.00%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary_performance">
+            <h2>Performance summary</h2>
+            <div class="tabbable">
+                <ul class="nav nav-pills justify-content-center">
+                    <li class="active">
+                        <button class="nav-link active" id="summary_scoreCalculationSpeed-tab" data-bs-toggle="pill" data-bs-target="#summary_scoreCalculationSpeed-tab-pane" type="button">Score calculation speed</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_worstScoreCalculationSpeedDifferencePercentage-tab" data-bs-toggle="pill" data-bs-target="#summary_worstScoreCalculationSpeedDifferencePercentage-tab-pane" type="button">Worst score calculation speed difference percentage</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_timeSpent-tab" data-bs-toggle="pill" data-bs-target="#summary_timeSpent-tab-pane" type="button">Time spent</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_timeSpentScalability-tab" data-bs-toggle="pill" data-bs-target="#summary_timeSpentScalability-tab-pane" type="button">Time spent scalability</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_bestScorePerTimeSpent-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent-tab-pane" type="button">Best score per time spent</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-2">
+                    <div class="tab-pane show active" id="summary_scoreCalculationSpeed-tab-pane">
+                        <h3 class="visually-hidden">Score calculation speed summary</h3>
+                        <p>
+                            Useful for comparing different score calculators and/or constraint implementations
+                            (presuming that the solver configurations do not differ otherwise).
+                            Also useful to measure the scalability cost of an extra constraint.
+                        </p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_scoreCalculationSpeedSummaryChart_cf2cc"></canvas>
+        <script async src="website/js/scoreCalculationSpeedSummaryChart_cf2cc.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>24tasks-8employees</th>
+                                            <th>50tasks-5employees</th>
+                                            <th>100tasks-5employees</th>
+                                            <th>500tasks-20employees</th>
+                                    </tr>
+                                    <tr class="table-info">
+                                        <th>Problem scale</th>
+                                        <td>68,504</td>
+                                            <td class="problemScale">768</td>
+                                            <td class="problemScale">2,750</td>
+                                            <td class="problemScale">10,500</td>
+                                            <td class="problemScale">260,000</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                            <td>272,697/s</td>
+                                                            <td>471,871/s</td>
+                                                            <td>280,186/s</td>
+                                                            <td>200,563/s</td>
+                                                            <td>138,170/s</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_worstScoreCalculationSpeedDifferencePercentage-tab-pane">
+                        <h3 class="visually-hidden">Worst score calculation speed difference percentage</h3>
+                        <p>
+                            Useful for comparing different score calculators and/or constraint implementations
+                            (presuming that the solver configurations do not differ otherwise).
+                            Also useful to measure the scalability cost of an extra constraint.
+                        </p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreCalculationSpeedDifferencePercentageSummaryChart_d6a54"></canvas>
+        <script async src="website/js/worstScoreCalculationSpeedDifferencePercentageSummaryChart_d6a54.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>24tasks-8employees</th>
+                                            <th>50tasks-5employees</th>
+                                            <th>100tasks-5employees</th>
+                                            <th>500tasks-20employees</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                                <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_timeSpent-tab-pane">
+                        <h3 class="visually-hidden">Time spent summary</h3>
+                        <p>Useful for visualizing the performance of construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_timeSpentSummaryChart_7c333"></canvas>
+        <script async src="website/js/timeSpentSummaryChart_7c333.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="4">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>24tasks-8employees</th>
+                                            <th>50tasks-5employees</th>
+                                            <th>100tasks-5employees</th>
+                                            <th>500tasks-20employees</th>
+                                    </tr>
+                                    <tr class="table-info">
+                                        <th>Problem scale</th>
+                                        <td>68,504</td>
+                                            <td class="problemScale">768</td>
+                                            <td class="problemScale">2,750</td>
+                                            <td class="problemScale">10,500</td>
+                                            <td class="problemScale">260,000</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+</th>
+                                            <td>300,000</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_timeSpentScalability-tab-pane">
+                        <h3 class="visually-hidden">Time spent scalability summary</h3>
+                        <p>Useful for extrapolating the scalability of construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_timeSpentScalabilitySummaryChart_a3b7"></canvas>
+        <script async src="website/js/timeSpentScalabilitySummaryChart_a3b7.js"></script>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScorePerTimeSpent-tab-pane">
+                        <h3 class="visually-hidden">Best score per time spent summary</h3>
+                        <p>Useful for visualizing trade-off between the best score versus the time spent for construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="summary_bestScorePerTimeSpent_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart0_2c29d"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart0_2c29d.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScorePerTimeSpent_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart1_e2287"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart1_e2287.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScorePerTimeSpent_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart2_a1e07"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart2_a1e07.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScorePerTimeSpent_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart3_50dcc"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart3_50dcc.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="summary_bestScorePerTimeSpent_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart4_7fb57"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart4_7fb57.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="problemBenchmarkResult">
+            <h2>Problem benchmarks</h2>
+                <section id="problemBenchmark_24tasks-002D8employees">
+                    <h3>24tasks-8employees</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>768</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.001 s. (1 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_24tasks-002D8employees_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_24tasks-002D8employees_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_e4506"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_e4506.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_2343a"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_2343a.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart2_c35a2"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart2_c35a2.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart3_844bd"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart3_844bd.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart4_adc20"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart4_adc20.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_24tasks-002D8employees_BEST_SCORE_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='24tasks-8employees/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_24tasks-002D8employees_Late-002D0020Acceptance">
+                            <h4>24tasks-8employees_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_50tasks-002D5employees">
+                    <h3>50tasks-5employees</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>50</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>2,750</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.001 s. (1 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_50tasks-002D5employees_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_50tasks-002D5employees_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_477a0"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_477a0.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_dc4f"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_dc4f.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart2_efe22"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart2_efe22.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart3_727e2"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart3_727e2.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart4_6cdfd"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart4_6cdfd.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_50tasks-002D5employees_BEST_SCORE_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='50tasks-5employees/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_50tasks-002D5employees_Late-002D0020Acceptance">
+                            <h4>50tasks-5employees_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_100tasks-002D5employees">
+                    <h3>100tasks-5employees</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>10,500</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.001 s. (1 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_100tasks-002D5employees_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_100tasks-002D5employees_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_ca4b2"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_ca4b2.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_9ddf2"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_9ddf2.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart2_585dc"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart2_585dc.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart3_801ed"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart3_801ed.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart4_9f1f1"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart4_9f1f1.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_100tasks-002D5employees_BEST_SCORE_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='100tasks-5employees/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_100tasks-002D5employees_Late-002D0020Acceptance">
+                            <h4>100tasks-5employees_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_500tasks-002D20employees">
+                    <h3>500tasks-20employees</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>20</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>20</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>500</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>260,000</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.005 s. (5 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_500tasks-002D20employees_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_500tasks-002D20employees_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show" id="problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_69d3b"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_69d3b.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_86ea1"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_86ea1.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_2-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart2_a1395"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart2_a1395.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_3-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart3_2f01a"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart3_2f01a.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show active" id="problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_4-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart4_dc112"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart4_dc112.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_0-tab-pane" type="button">Hard 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_1-tab-pane" type="button">Soft 0 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_2-tab-pane" type="button">Soft 1 Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_3-tab-pane" type="button">Soft 2 Score</button></li>
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_500tasks-002D20employees_BEST_SCORE_chart_4-tab-pane" type="button">Soft 3 Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='500tasks-20employees/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_500tasks-002D20employees_Late-002D0020Acceptance">
+                            <h4>500tasks-20employees_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+        </section>
+
+        <section id="solverBenchmarkResult">
+            <h2>Solver benchmarks</h2>
+            <ul class="nav nav-pills justify-content-center p-2" id="solverBenchmarkResultTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="solverBenchmark_Late-002D0020Acceptance_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_Late-002D0020Acceptance_config-tab-pane" type="button">
+                            Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+
+                        </button>
+                    </li>
+            </ul>
+            <div class="tab-content">
+                    <div class="tab-pane show active" id="solverBenchmark_Late-002D0020Acceptance_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_Late-002D0020Acceptance_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.taskassigning.domain.TaskAssigningSolution&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.taskassigning.domain.Employee&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.taskassigning.domain.Task&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.taskassigning.score.TaskAssigningConstraintProvider&lt;/constraintProviderClass&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+            </div>
+        </section>
+
+        <section id="environmentInformation">
+            <h2>Environment Information</h2>
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th>
+                    <td>2023-06-21_153018</td>
+                </tr>
+                <tr>
+                    <th>Aggregation</th>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>Failure count</th>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <th>Starting timestamp</th>
+                    <td>Jun 21, 2023, 3:30:18 PM</td>
+                </tr>
+                <tr>
+                    <th>Warm-up time spent</th>
+                        <td>0.030 s. (30 ms.)</td>
+                </tr>
+                <tr>
+                    <th>Parallel benchmark count / available processors</th>
+                        <td>9 / 16</td>
+                </tr>
+                <tr>
+                    <th>Benchmark time spent</th>
+                        <td>05:00.405 s. (300,405 ms.)</td>
+                </tr>
+                <tr>
+                    <th>Environment mode</th>
+                    <td>REPRODUCIBLE</td>
+                </tr>
+                <tr>
+                    <th>Logging level for ai.timefold.solver.core</th>
+                    <td>DEBUG</td>
+                </tr>
+                <tr>
+                    <th>Solver ranking class</th>
+                    <td>
+                        <span data-toggle="tooltip" title="ai.timefold.solver.benchmark.impl.ranking.TotalScoreSolverRankingComparator">
+                            TotalScoreSolverRankingComparator
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>VM max memory (as in -Xmx but lower)</th>
+                        <td>16,953,376,768 bytes</td>
+                </tr>
+                <tr>
+                    <th>Timefold version</th>
+                    <td>0.9.40-SNAPSHOT</td>
+                </tr>
+                <tr>
+                    <th>Java version</th>
+                    <td>Java 17.0.7 (Amazon.com Inc.)</td>
+                </tr>
+                <tr>
+                    <th>Java VM</th>
+                    <td>Java OpenJDK 64-Bit Server VM 17.0.7+7-LTS (Amazon.com Inc.)</td>
+                </tr>
+                <tr>
+                    <th>Operating system</th>
+                    <td>Windows 11 amd64 10.0</td>
+                </tr>
+                <tr>
+                    <th>Report locale</th>
+                    <td>Unknown</td>
+                </tr>
+                <tr>
+                    <th>Report timezone</th>
+                    <td>Asia/Seoul</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+    <footer class="bg-black text-white-50">
+        <div class="container">
+            <div class="hstack gap-3 p-4">
+                <div class="ms-auto"><a class="text-white" href="https://timefold.ai">Timefold</a></div>
+                <div class="vr"></div>
+                <div><a class="text-white" href="https://timefold.ai/docs">Documentation</a></div>
+                <div class="vr"></div>
+                <div><a class="text-white" href="https://github.com/TimefoldAI">Code</a></div>
+                <div class="vr"></div>
+                <div class="me-auto"><a class="text-white" href="https://timefold.ai/product/support/">Support</a></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

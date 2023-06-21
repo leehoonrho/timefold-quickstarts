@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><plannerBenchmarkResult>
+  <name>2023-06-21_153018</name>
+  <aggregation>false</aggregation>
+  <availableProcessors>16</availableProcessors>
+  <loggingLevelTimefoldSolverCore>DEBUG</loggingLevelTimefoldSolverCore>
+  <maxMemory>16953376768</maxMemory>
+  <timefoldSolverVersion>0.9.40-SNAPSHOT</timefoldSolverVersion>
+  <javaVersion>Java 17.0.7 (Amazon.com Inc.)</javaVersion>
+  <javaVM>Java OpenJDK 64-Bit Server VM 17.0.7+7-LTS (Amazon.com Inc.)</javaVM>
+  <operatingSystem>Windows 11 amd64 10.0</operatingSystem>
+  <parallelBenchmarkCount>9</parallelBenchmarkCount>
+  <warmUpTimeMillisSpentLimit>30</warmUpTimeMillisSpentLimit>
+  <solverBenchmarkResult>
+    <name>Late Acceptance</name>
+    <subSingleCount>1</subSingleCount>
+    <solverConfig>
+      <monitoring>
+        <metric>BEST_SCORE</metric>
+      </monitoring>
+      <solutionClass>ai.timefold.solver.examples.taskassigning.domain.TaskAssigningSolution</solutionClass>
+      <entityClass>ai.timefold.solver.examples.taskassigning.domain.Employee</entityClass>
+      <entityClass>ai.timefold.solver.examples.taskassigning.domain.Task</entityClass>
+      <scoreDirectorFactory>
+        <constraintProviderClass>ai.timefold.solver.examples.taskassigning.score.TaskAssigningConstraintProvider</constraintProviderClass>
+      </scoreDirectorFactory>
+      <termination>
+        <minutesSpentLimit>5</minutesSpentLimit>
+      </termination>
+    </solverConfig>
+    <singleBenchmarkResult id="1">
+      <subSingleBenchmarkResult>
+        <subSingleBenchmarkIndex>0</subSingleBenchmarkIndex>
+        <succeeded>true</succeeded>
+        <score class="ai.timefold.solver.core.api.score.buildin.bendable.BendableScore">[0]hard/[-494/-836426/-1909/-3203]soft</score>
+        <timeMillisSpent>300000</timeMillisSpent>
+        <scoreCalculationCount>141561329</scoreCalculationCount>
+      </subSingleBenchmarkResult>
+      <timeMillisSpent>-1</timeMillisSpent>
+      <scoreCalculationCount>-1</scoreCalculationCount>
+    </singleBenchmarkResult>
+    <singleBenchmarkResult id="2">
+      <subSingleBenchmarkResult>
+        <subSingleBenchmarkIndex>0</subSingleBenchmarkIndex>
+        <succeeded>true</succeeded>
+        <score class="ai.timefold.solver.core.api.score.buildin.bendable.BendableScore">[0]hard/[-3925/-6293940/-7772/-20463]soft</score>
+        <timeMillisSpent>300000</timeMillisSpent>
+        <scoreCalculationCount>84056012</scoreCalculationCount>
+      </subSingleBenchmarkResult>
+      <timeMillisSpent>-1</timeMillisSpent>
+      <scoreCalculationCount>-1</scoreCalculationCount>
+    </singleBenchmarkResult>
+    <singleBenchmarkResult id="3">
+      <subSingleBenchmarkResult>
+        <subSingleBenchmarkIndex>0</subSingleBenchmarkIndex>
+        <succeeded>true</succeeded>
+        <score class="ai.timefold.solver.core.api.score.buildin.bendable.BendableScore">[0]hard/[-8057/-22133498/-34832/-65802]soft</score>
+        <timeMillisSpent>300000</timeMillisSpent>
+        <scoreCalculationCount>60169088</scoreCalculationCount>
+      </subSingleBenchmarkResult>
+      <timeMillisSpent>-1</timeMillisSpent>
+      <scoreCalculationCount>-1</scoreCalculationCount>
+    </singleBenchmarkResult>
+    <singleBenchmarkResult id="4">
+      <subSingleBenchmarkResult>
+        <subSingleBenchmarkIndex>0</subSingleBenchmarkIndex>
+        <succeeded>true</succeeded>
+        <score class="ai.timefold.solver.core.api.score.buildin.bendable.BendableScore">[0]hard/[-48146/-58314624/-135422/-235118]soft</score>
+        <timeMillisSpent>300000</timeMillisSpent>
+        <scoreCalculationCount>41451160</scoreCalculationCount>
+      </subSingleBenchmarkResult>
+      <timeMillisSpent>-1</timeMillisSpent>
+      <scoreCalculationCount>-1</scoreCalculationCount>
+    </singleBenchmarkResult>
+  </solverBenchmarkResult>
+  <unifiedProblemBenchmarkResult>
+    <name>24tasks-8employees</name>
+    <fileProblemProvider/>
+    <writeOutputSolutionEnabled>false</writeOutputSolutionEnabled>
+    <bestScoreProblemStatistic>
+      <problemStatisticType>BEST_SCORE</problemStatisticType>
+    </bestScoreProblemStatistic>
+    <singleBenchmarkResult>1</singleBenchmarkResult>
+    <entityCount>8</entityCount>
+    <variableCount>8</variableCount>
+    <maximumValueCount>24</maximumValueCount>
+    <problemScale>768</problemScale>
+    <inputSolutionLoadingTimeMillisSpent>1</inputSolutionLoadingTimeMillisSpent>
+  </unifiedProblemBenchmarkResult>
+  <unifiedProblemBenchmarkResult>
+    <name>50tasks-5employees</name>
+    <fileProblemProvider/>
+    <writeOutputSolutionEnabled>false</writeOutputSolutionEnabled>
+    <bestScoreProblemStatistic>
+      <problemStatisticType>BEST_SCORE</problemStatisticType>
+    </bestScoreProblemStatistic>
+    <singleBenchmarkResult>2</singleBenchmarkResult>
+    <entityCount>5</entityCount>
+    <variableCount>5</variableCount>
+    <maximumValueCount>50</maximumValueCount>
+    <problemScale>2750</problemScale>
+    <inputSolutionLoadingTimeMillisSpent>1</inputSolutionLoadingTimeMillisSpent>
+  </unifiedProblemBenchmarkResult>
+  <unifiedProblemBenchmarkResult>
+    <name>100tasks-5employees</name>
+    <fileProblemProvider/>
+    <writeOutputSolutionEnabled>false</writeOutputSolutionEnabled>
+    <bestScoreProblemStatistic>
+      <problemStatisticType>BEST_SCORE</problemStatisticType>
+    </bestScoreProblemStatistic>
+    <singleBenchmarkResult>3</singleBenchmarkResult>
+    <entityCount>5</entityCount>
+    <variableCount>5</variableCount>
+    <maximumValueCount>100</maximumValueCount>
+    <problemScale>10500</problemScale>
+    <inputSolutionLoadingTimeMillisSpent>1</inputSolutionLoadingTimeMillisSpent>
+  </unifiedProblemBenchmarkResult>
+  <unifiedProblemBenchmarkResult>
+    <name>500tasks-20employees</name>
+    <fileProblemProvider/>
+    <writeOutputSolutionEnabled>false</writeOutputSolutionEnabled>
+    <bestScoreProblemStatistic>
+      <problemStatisticType>BEST_SCORE</problemStatisticType>
+    </bestScoreProblemStatistic>
+    <singleBenchmarkResult>4</singleBenchmarkResult>
+    <entityCount>20</entityCount>
+    <variableCount>20</variableCount>
+    <maximumValueCount>500</maximumValueCount>
+    <problemScale>260000</problemScale>
+    <inputSolutionLoadingTimeMillisSpent>5</inputSolutionLoadingTimeMillisSpent>
+  </unifiedProblemBenchmarkResult>
+  <startingTimestamp>2023-06-21T15:30:18.8447494+09:00</startingTimestamp>
+  <benchmarkTimeMillisSpent>300405</benchmarkTimeMillisSpent>
+</plannerBenchmarkResult>
