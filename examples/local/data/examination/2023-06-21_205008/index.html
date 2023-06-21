@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2023-06-21_205008 Planner benchmark report</title>
+
+    <link href="website/webjars/timefold/img/timefold-favicon.svg" rel="icon" type="image/svg+xml">
+    <link href="website/webjars/timefold/img/timefold-favicon.svg" rel="mask-icon" color="#000000">
+
+    <link href="website/css/app.css" rel="stylesheet"/>
+    <link href="website/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="website/webjars/timefold/css/timefold-webui.css" rel="stylesheet" />
+    <link href="website/css/prettify.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" /> 
+
+    <script src="https://buttons.github.io/buttons.js"></script>
+    <script src="website/js/app.js"></script> 
+    <script src="website/webjars/jquery/jquery.min.js"></script>
+    <script src="website/webjars/bootstrap/js/bootstrap.bundle.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0"></script>
+    <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot@4.2.0"></script>
+    <script src="website/js/chartjs-plugin-watermark.js"></script>
+    <script src="website/js/prettify.js"></script>
+</head>
+<body onload="prettyPrint()">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-black shadow">
+        <div class="container">
+            <div class="text-white">
+                <a href="#" class="navbar-brand">
+                    <img src="website/webjars/timefold/img/timefold-logo-horizontal-negative.svg" alt="Timefold Logo (horizontal, negative)">
+                </a>
+                <br />
+                Benchmark Report
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Summary
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#summary_result">Results</a></li>
+                            <li><a class="dropdown-item" href="#summary_performance">Performance</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Problems
+                        </a>
+                        <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set1">&nbsp;exam_comp_set1</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set2">&nbsp;exam_comp_set2</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set3">&nbsp;exam_comp_set3</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set4">&nbsp;exam_comp_set4</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set5">&nbsp;exam_comp_set5</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set6">&nbsp;exam_comp_set6</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set7">&nbsp;exam_comp_set7</a></li>
+                                <li><a class="dropdown-item" href="#problemBenchmark_exam_comp_set8">&nbsp;exam_comp_set8</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#solverBenchmarkResult">Solvers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#environmentInformation">Environment</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="d-inline-flex align-items-center">
+                        <span class="mx-1" style="position:relative; top:3px;"><a class="github-button" aria-label="Star Timefold on GitHub" href="https://github.com/TimefoldAI/timefold-solver" data-show-count="true" data-color-scheme="no-preference: dark; light: dark; dark: dark;">Star</a></span>
+                        <a class="mx-1" href="https://stackoverflow.com/questions/tagged/timefold"><i class="fa-brands fa-stack-overflow text-white"></i></a>
+                        <a class="mx-1" href="https://youtube.com/@timefold"><i class="fa-brands fa-youtube text-white"></i></a>
+                        <a class="mx-1" href="https://twitter.com/TimefoldAI"><i class="fa-brands fa-twitter text-white"></i></a>
+                        <a role="button" class="btn btn-sm tf-btn-contact btn-outline-light mx-1" href="https://timefold.ai/company/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid p-2 w-75"> <!-- Content -->
+        <header class="visually-hidden">
+            <h1>Timefold Benchmark report</h1>
+        </header>
+
+        <section id="summary_result">
+            <h2>Result summary</h2>
+            <div class="tabbable">
+                <ul class="nav nav-pills justify-content-center">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="summary_bestScore-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScore-tab-pane" type="button">Best score</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_bestScoreScalability-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability-tab-pane" type="button">Best score scalability</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_bestScoreDistribution-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution-tab-pane" type="button">Best score distribution</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_winningScoreDifference-tab" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference-tab-pane" type="button">Winning score difference</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="summary_worstScoreDifferencePercentage-tab" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage-tab-pane" type="button">Worst score difference percentage (ROI)</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-2">
+                    <div class="tab-pane show active" id="summary_bestScore-tab-pane">
+                        <h3 class="visually-hidden">Best score summary</h3>
+                        <p>Useful for visualizing the best solver configuration.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_bestScore_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart0_1cbba"></canvas>
+        <script async src="website/js/bestScoreSummaryChart0_1cbba.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScore_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreSummaryChart1_3e74e"></canvas>
+        <script async src="website/js/bestScoreSummaryChart1_3e74e.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScore_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Total</th>
+                                        <th rowspan="2">Average</th>
+                                        <th rowspan="2">Standard Deviation</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>exam_comp_set1</th>
+                                        <th>exam_comp_set2</th>
+                                        <th>exam_comp_set3</th>
+                                        <th>exam_comp_set4</th>
+                                        <th>exam_comp_set5</th>
+                                        <th>exam_comp_set6</th>
+                                        <th>exam_comp_set7</th>
+                                        <th>exam_comp_set8</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-3060hard/-128527soft</td>
+                                            <td>-383hard/-16066soft</td>
+                                            <td>371.68/13590.31</td>
+                                                            <td>-1010hard/-6947soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-1hard/-933soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-624hard/-21360soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-867hard/-42139soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-120hard/-5808soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-274hard/-32300soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-6hard/-8273soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-158hard/-10767soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-901hard/-123418soft</td>
+                                            <td>-113hard/-15428soft</td>
+                                            <td>116.67/11538.59</td>
+                                                            <td>-25hard/-8401soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-24hard/-852soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-318hard/-13623soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-35hard/-32406soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-76hard/-6256soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-302hard/-29130soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-96hard/-5464soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-25hard/-27286soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-845hard/-122956soft</td>
+                                            <td>-106hard/-15370soft</td>
+                                            <td>116.41/11512.19</td>
+                                                            <td>0hard/-8273soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+</td>
+                                                            <td>-24hard/-844soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-276hard/-13479soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-35hard/-32406soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-83hard/-6253soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-324hard/-28885soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-87hard/-5519soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-16hard/-27297soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-58hard/-95321soft</td>
+                                            <td>-8hard/-11916soft</td>
+                                            <td>14.65/10711.88</td>
+                                                            <td>0hard/-5619soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>0hard/-588soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>0hard/-12746soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>-10hard/-27238soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>0hard/-3681soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>-3hard/-31645soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>-45hard/-5005soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>0hard/-8799soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-4hard/-145855soft</td>
+                                            <td>-1hard/-18232soft</td>
+                                            <td>1.41/14650.89</td>
+                                                            <td>0hard/-7832soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                            <td>0hard/-1481soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                            <td>0hard/-39714soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                            <td>-4hard/-39910soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                            <td>0hard/-3755soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                            <td>0hard/-28805soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>0hard/-11090soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                            <td>0hard/-13268soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScoreScalability-tab-pane">
+                        <h3 class="visually-hidden">Best score scalability summary</h3>
+                        <p>Useful for visualizing the scalability of each solver configuration.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_bestScoreScalability_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart0_d0a20"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart0_d0a20.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreScalability_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreScalabilitySummaryChart1_bff40"></canvas>
+        <script async src="website/js/bestScoreScalabilitySummaryChart1_bff40.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreScalability_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScoreDistribution-tab-pane">
+                        <h3 class="visually-hidden">Best score distribution summary</h3>
+                        <p>Useful for visualizing the reliability of each solver configuration.</p>
+                            <div class="alert alert-info">
+                                <p>Benchmarker did not run multiple subSingles, so there is no distribution and therefore no reliability indication.</p>
+                            </div>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_bestScoreDistribution_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart0_6c240"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart0_6c240.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScoreDistribution_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreDistributionSummaryChart1_7559e"></canvas>
+        <script async src="website/js/bestScoreDistributionSummaryChart1_7559e.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScoreDistribution_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_winningScoreDifference-tab-pane">
+                        <h3 class="visually-hidden">Winning score difference summary</h3>
+                        <p>Useful for zooming in on the results of the best score summary.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_winningScoreDifference_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart0_8745c"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart0_8745c.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_winningScoreDifference_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_winningScoreDifferenceSummaryChart1_448c1"></canvas>
+        <script async src="website/js/winningScoreDifferenceSummaryChart1_448c1.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_winningScoreDifference_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Total</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>exam_comp_set1</th>
+                                        <th>exam_comp_set2</th>
+                                        <th>exam_comp_set3</th>
+                                        <th>exam_comp_set4</th>
+                                        <th>exam_comp_set5</th>
+                                        <th>exam_comp_set6</th>
+                                        <th>exam_comp_set7</th>
+                                        <th>exam_comp_set8</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-3056hard/-17289soft</td>
+                                            <td>-382hard/-2162soft</td>
+                                                        <td>-1010hard/-1328soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-1hard/-345soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-624hard/-8614soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-863hard/-2229soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-120hard/-2127soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-274hard/-3495soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-6hard/2817soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-158hard/-1968soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-897hard/-12180soft</td>
+                                            <td>-113hard/-1523soft</td>
+                                                        <td>-25hard/-2782soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-24hard/-264soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-318hard/-877soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-31hard/7504soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-76hard/-2575soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-302hard/-325soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-96hard/5626soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-25hard/-18487soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-841hard/-11718soft</td>
+                                            <td>-106hard/-1465soft</td>
+                                                        <td>0hard/-2654soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+</td>
+                                                        <td>-24hard/-256soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-276hard/-733soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-31hard/7504soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-83hard/-2572soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-324hard/-80soft&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-87hard/5571soft&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-16hard/-18498soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>-54hard/15917soft</td>
+                                            <td>-7hard/1989soft</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>-6hard/12672soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>-3hard/-2840soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>-45hard/6085soft&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>0hard/-34617soft</td>
+                                            <td>0hard/-4328soft</td>
+                                                        <td>0hard/-2213soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>0hard/-893soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>0hard/-26968soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0hard/-74soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0hard/0soft&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>0hard/-4469soft&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_worstScoreDifferencePercentage-tab-pane">
+                        <h3 class="visually-hidden">Worst score difference percentage summary (ROI)</h3>
+                        <p>Useful for visualizing the return on investment (ROI) to decision makers.</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_worstScoreDifferencePercentage_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart0_c04d3"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart0_c04d3.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_worstScoreDifferencePercentage_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreDifferencePercentageSummaryChart1_dbf93"></canvas>
+        <script async src="website/js/worstScoreDifferencePercentageSummaryChart1_dbf93.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_worstScoreDifferencePercentage_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                        <th>exam_comp_set1</th>
+                                        <th>exam_comp_set2</th>
+                                        <th>exam_comp_set3</th>
+                                        <th>exam_comp_set4</th>
+                                        <th>exam_comp_set5</th>
+                                        <th>exam_comp_set6</th>
+                                        <th>exam_comp_set7</th>
+                                        <th>exam_comp_set8</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>25.63%/-9.09%</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>95.83%/-9.51%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>15.43%/-11.82%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>93.75%/-51.41%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>46.27%/-15.45%</td>
+                                                        <td>97.52%/-20.93%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>49.04%/36.22%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>95.96%/23.10%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>36.67%/-7.71%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>6.79%/-0.85%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>84.18%/-153.42%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>47.73%/-15.04%</td>
+                                                        <td>100.00%/-19.09%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+</td>
+                                                        <td>0.00%/0.94%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>55.77%/36.90%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>95.96%/23.10%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>30.83%/-7.66%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>0.00%/0.00%&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>9.38%/-1.01%&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>89.87%/-153.52%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>93.88%/22.44%</td>
+                                                        <td>100.00%/19.12%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>100.00%/30.99%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>100.00%/40.33%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>98.85%/35.36%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>100.00%/36.62%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>99.07%/-9.56%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>53.12%/8.40%&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>100.00%/18.28%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>99.94%/-32.22%</td>
+                                                        <td>100.00%/-12.74%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>100.00%/-73.83%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>100.00%/-85.93%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>99.54%/5.29%&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Infeasible score">!</span>
+</td>
+                                                        <td>100.00%/35.35%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                                        <td>100.00%/0.28%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>100.00%/-102.96%&nbsp;        <span class="badge text-bg-success">0</span>
+
+</td>
+                                                        <td>100.00%/-23.23%&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary_performance">
+            <h2>Performance summary</h2>
+            <div class="tabbable">
+                <ul class="nav nav-pills justify-content-center">
+                    <li class="active">
+                        <button class="nav-link active" id="summary_scoreCalculationSpeed-tab" data-bs-toggle="pill" data-bs-target="#summary_scoreCalculationSpeed-tab-pane" type="button">Score calculation speed</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_worstScoreCalculationSpeedDifferencePercentage-tab" data-bs-toggle="pill" data-bs-target="#summary_worstScoreCalculationSpeedDifferencePercentage-tab-pane" type="button">Worst score calculation speed difference percentage</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_timeSpent-tab" data-bs-toggle="pill" data-bs-target="#summary_timeSpent-tab-pane" type="button">Time spent</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_timeSpentScalability-tab" data-bs-toggle="pill" data-bs-target="#summary_timeSpentScalability-tab-pane" type="button">Time spent scalability</button>
+                    </li>
+                    <li>
+                        <button class="nav-link" id="summary_bestScorePerTimeSpent-tab" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent-tab-pane" type="button">Best score per time spent</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-2">
+                    <div class="tab-pane show active" id="summary_scoreCalculationSpeed-tab-pane">
+                        <h3 class="visually-hidden">Score calculation speed summary</h3>
+                        <p>
+                            Useful for comparing different score calculators and/or constraint implementations
+                            (presuming that the solver configurations do not differ otherwise).
+                            Also useful to measure the scalability cost of an extra constraint.
+                        </p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_scoreCalculationSpeedSummaryChart_70f9c"></canvas>
+        <script async src="website/js/scoreCalculationSpeedSummaryChart_70f9c.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>exam_comp_set1</th>
+                                            <th>exam_comp_set2</th>
+                                            <th>exam_comp_set3</th>
+                                            <th>exam_comp_set4</th>
+                                            <th>exam_comp_set5</th>
+                                            <th>exam_comp_set6</th>
+                                            <th>exam_comp_set7</th>
+                                            <th>exam_comp_set8</th>
+                                    </tr>
+                                    <tr class="table-info">
+                                        <th>Problem scale</th>
+                                        <td>656,582</td>
+                                            <td class="problemScale">228,704</td>
+                                            <td class="problemScale">1,697,556</td>
+                                            <td class="problemScale">1,486,272</td>
+                                            <td class="problemScale">5,653</td>
+                                            <td class="problemScale">126,300</td>
+                                            <td class="problemScale">28,816</td>
+                                            <td class="problemScale">1,299,795</td>
+                                            <td class="problemScale">379,560</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>85,060/s</td>
+                                                            <td>37,536/s</td>
+                                                            <td>76,533/s</td>
+                                                            <td>75,563/s</td>
+                                                            <td>44,886/s</td>
+                                                            <td>150,138/s</td>
+                                                            <td>97,847/s</td>
+                                                            <td>90,715/s</td>
+                                                            <td>107,262/s</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>84,443/s</td>
+                                                            <td>39,672/s</td>
+                                                            <td>77,738/s</td>
+                                                            <td>76,305/s</td>
+                                                            <td>41,627/s</td>
+                                                            <td>160,522/s</td>
+                                                            <td>89,940/s</td>
+                                                            <td>88,356/s</td>
+                                                            <td>101,384/s</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>80,759/s</td>
+                                                            <td>39,763/s</td>
+                                                            <td>77,609/s</td>
+                                                            <td>78,061/s</td>
+                                                            <td>31,220/s</td>
+                                                            <td>131,604/s</td>
+                                                            <td>97,870/s</td>
+                                                            <td>88,172/s</td>
+                                                            <td>101,779/s</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>15,537/s</td>
+                                                            <td>9,126/s</td>
+                                                            <td>20,461/s</td>
+                                                            <td>11,771/s</td>
+                                                            <td>7,791/s</td>
+                                                            <td>26,527/s</td>
+                                                            <td>19,426/s</td>
+                                                            <td>14,008/s</td>
+                                                            <td>15,186/s</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>15,435/s</td>
+                                                            <td>8,973/s</td>
+                                                            <td>20,132/s</td>
+                                                            <td>11,269/s</td>
+                                                            <td>7,486/s</td>
+                                                            <td>28,046/s</td>
+                                                            <td>18,709/s</td>
+                                                            <td>13,846/s</td>
+                                                            <td>15,020/s</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_worstScoreCalculationSpeedDifferencePercentage-tab-pane">
+                        <h3 class="visually-hidden">Worst score calculation speed difference percentage</h3>
+                        <p>
+                            Useful for comparing different score calculators and/or constraint implementations
+                            (presuming that the solver configurations do not differ otherwise).
+                            Also useful to measure the scalability cost of an extra constraint.
+                        </p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_worstScoreCalculationSpeedDifferencePercentageSummaryChart_b7076"></canvas>
+        <script async src="website/js/worstScoreCalculationSpeedDifferencePercentageSummaryChart_b7076.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>exam_comp_set1</th>
+                                            <th>exam_comp_set2</th>
+                                            <th>exam_comp_set3</th>
+                                            <th>exam_comp_set4</th>
+                                            <th>exam_comp_set5</th>
+                                            <th>exam_comp_set6</th>
+                                            <th>exam_comp_set7</th>
+                                            <th>exam_comp_set8</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>465.86%</td>
+                                                        <td>318.32%</td>
+                                                        <td>280.16%</td>
+                                                        <td>570.54%</td>
+                                                        <td>499.60%</td>
+                                                        <td>465.98%</td>
+                                                        <td>422.99%</td>
+                                                        <td>555.17%</td>
+                                                        <td>614.13%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>457.56%</td>
+                                                        <td>342.13%</td>
+                                                        <td>286.14%</td>
+                                                        <td>577.12%</td>
+                                                        <td>456.06%</td>
+                                                        <td>505.13%</td>
+                                                        <td>380.73%</td>
+                                                        <td>538.13%</td>
+                                                        <td>574.99%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>434.01%</td>
+                                                        <td>343.14%</td>
+                                                        <td>285.50%</td>
+                                                        <td>592.71%</td>
+                                                        <td>317.05%</td>
+                                                        <td>396.11%</td>
+                                                        <td>423.12%</td>
+                                                        <td>536.80%</td>
+                                                        <td>577.62%</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>2.25%</td>
+                                                        <td>1.71%</td>
+                                                        <td>1.63%</td>
+                                                        <td>4.45%</td>
+                                                        <td>4.07%</td>
+                                                        <td>0.00%</td>
+                                                        <td>3.83%</td>
+                                                        <td>1.17%</td>
+                                                        <td>1.11%</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                                <td>0.72%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>5.73%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                                        <td>0.00%</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_timeSpent-tab-pane">
+                        <h3 class="visually-hidden">Time spent summary</h3>
+                        <p>Useful for visualizing the performance of construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_timeSpentSummaryChart_a408f"></canvas>
+        <script async src="website/js/timeSpentSummaryChart_a408f.js"></script>
+    </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Solver</th>
+                                        <th rowspan="2">Average</th>
+                                        <th colspan="8">Problem</th>
+                                    </tr>
+                                    <tr>
+                                            <th>exam_comp_set1</th>
+                                            <th>exam_comp_set2</th>
+                                            <th>exam_comp_set3</th>
+                                            <th>exam_comp_set4</th>
+                                            <th>exam_comp_set5</th>
+                                            <th>exam_comp_set6</th>
+                                            <th>exam_comp_set7</th>
+                                            <th>exam_comp_set8</th>
+                                    </tr>
+                                    <tr class="table-info">
+                                        <th>Problem scale</th>
+                                        <td>656,582</td>
+                                            <td class="problemScale">228,704</td>
+                                            <td class="problemScale">1,697,556</td>
+                                            <td class="problemScale">1,486,272</td>
+                                            <td class="problemScale">5,653</td>
+                                            <td class="problemScale">126,300</td>
+                                            <td class="problemScale">28,816</td>
+                                            <td class="problemScale">1,299,795</td>
+                                            <td class="problemScale">379,560</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                        <tr>
+                                            <th>First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>4,295</td>
+                                                            <td>4.362 s. (4,362 ms.)</td>
+                                                            <td>6.830 s. (6,830 ms.)</td>
+                                                            <td>11.715 s. (11,715 ms.)</td>
+                                                            <td>0.097 s. (97 ms.)</td>
+                                                            <td>0.382 s. (382 ms.)</td>
+                                                            <td>0.262 s. (262 ms.)</td>
+                                                            <td>7.832 s. (7,832 ms.)</td>
+                                                            <td>2.884 s. (2,884 ms.)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>5,051</td>
+                                                            <td>5.113 s. (5,113 ms.)</td>
+                                                            <td>7.472 s. (7,472 ms.)</td>
+                                                            <td>13.759 s. (13,759 ms.)</td>
+                                                            <td>0.129 s. (129 ms.)</td>
+                                                            <td>0.419 s. (419 ms.)</td>
+                                                            <td>0.304 s. (304 ms.)</td>
+                                                            <td>9.873 s. (9,873 ms.)</td>
+                                                            <td>3.342 s. (3,342 ms.)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>5,025</td>
+                                                            <td>5.039 s. (5,039 ms.)</td>
+                                                            <td>7.609 s. (7,609 ms.)</td>
+                                                            <td>13.326 s. (13,326 ms.)</td>
+                                                            <td>0.172 s. (172 ms.)</td>
+                                                            <td>0.511 s. (511 ms.)</td>
+                                                            <td>0.279 s. (279 ms.)</td>
+                                                            <td>9.933 s. (9,933 ms.)</td>
+                                                            <td>3.333 s. (3,333 ms.)</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>300,001</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.001 s. (300,001 ms.)</td>
+                                                            <td>05:00.012 s. (300,012 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <th>Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+</th>
+                                            <td>300,000</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                                            <td>05:00.000 s. (300,000 ms.)</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_timeSpentScalability-tab-pane">
+                        <h3 class="visually-hidden">Time spent scalability summary</h3>
+                        <p>Useful for extrapolating the scalability of construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="chart-container mb-2">
+        <canvas id="chart_timeSpentScalabilitySummaryChart_54b3c"></canvas>
+        <script async src="website/js/timeSpentScalabilitySummaryChart_54b3c.js"></script>
+    </div>
+                    </div>
+                    <div class="tab-pane show" id="summary_bestScorePerTimeSpent-tab-pane">
+                        <h3 class="visually-hidden">Best score per time spent summary</h3>
+                        <p>Useful for visualizing trade-off between the best score versus the time spent for construction heuristics (presuming that no other solver phases are configured).</p>
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="summary_bestScorePerTimeSpent_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart0_43bb"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart0_43bb.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="summary_bestScorePerTimeSpent_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScorePerTimeSpentSummaryChart1_49ec5"></canvas>
+        <script async src="website/js/bestScorePerTimeSpentSummaryChart1_49ec5.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#summary_bestScorePerTimeSpent_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="problemBenchmarkResult">
+            <h2>Problem benchmarks</h2>
+                <section id="problemBenchmark_exam_comp_set1">
+                    <h3>exam_comp_set1</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>607</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>1,212</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>54</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>228,704</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.147 s. (147 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set1_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set1_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set1_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set1_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_33c90"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_33c90.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set1_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_5e126"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_5e126.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set1_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set1_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set1/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set1/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set1/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set1/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set1/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set1_First-002D0020Fit">
+                            <h4>exam_comp_set1_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set1_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set1_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set1_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set1_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set1_Tabu-002D0020Search">
+                            <h4>exam_comp_set1_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set1_Late-002D0020Acceptance">
+                            <h4>exam_comp_set1_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set2">
+                    <h3>exam_comp_set2</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>870</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>1,736</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>49</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>1,697,556</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.024 s. (24 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set2_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set2_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set2_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set2_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_10722"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_10722.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set2_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_350c4"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_350c4.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set2_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set2_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set2/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set2/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set2/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set2/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set2/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set2_First-002D0020Fit">
+                            <h4>exam_comp_set2_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set2_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set2_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set2_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set2_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set2_Tabu-002D0020Search">
+                            <h4>exam_comp_set2_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set2_Late-002D0020Acceptance">
+                            <h4>exam_comp_set2_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set3">
+                    <h3>exam_comp_set3</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>934</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>1,792</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>48</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>1,486,272</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.117 s. (117 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set3_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set3_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set3_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set3_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_8939"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_8939.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set3_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_c318a"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_c318a.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set3_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set3_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set3/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set3/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set3/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set3/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set3/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set3_First-002D0020Fit">
+                            <h4>exam_comp_set3_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set3_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set3_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set3_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set3_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set3_Tabu-002D0020Search">
+                            <h4>exam_comp_set3_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set3_Late-002D0020Acceptance">
+                            <h4>exam_comp_set3_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set4">
+                    <h3>exam_comp_set4</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>273</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>542</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>21</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>5,653</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.008 s. (8 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set4_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set4_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set4_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set4_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_b5bc4"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_b5bc4.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set4_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_c8e2f"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_c8e2f.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set4_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set4_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set4/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set4/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set4/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set4/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set4/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set4_First-002D0020Fit">
+                            <h4>exam_comp_set4_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set4_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set4_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set4_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set4_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set4_Tabu-002D0020Search">
+                            <h4>exam_comp_set4_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set4_Late-002D0020Acceptance">
+                            <h4>exam_comp_set4_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set5">
+                    <h3>exam_comp_set5</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>1,018</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>2,020</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>126,300</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.014 s. (14 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set5_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set5_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set5_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set5_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_a8a05"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_a8a05.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set5_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_5c6e0"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_5c6e0.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set5_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set5_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set5/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set5/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set5/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set5/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set5/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set5_First-002D0020Fit">
+                            <h4>exam_comp_set5_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set5_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set5_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set5_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set5_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set5_Tabu-002D0020Search">
+                            <h4>exam_comp_set5_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set5_Late-002D0020Acceptance">
+                            <h4>exam_comp_set5_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set6">
+                    <h3>exam_comp_set6</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>242</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>466</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>28,816</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.008 s. (8 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set6_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set6_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set6_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set6_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_1726e"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_1726e.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set6_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_a531b"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_a531b.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set6_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set6_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set6/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set6/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set6/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set6/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set6/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set6_First-002D0020Fit">
+                            <h4>exam_comp_set6_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set6_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set6_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set6_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set6_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set6_Tabu-002D0020Search">
+                            <h4>exam_comp_set6_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set6_Late-002D0020Acceptance">
+                            <h4>exam_comp_set6_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set7">
+                    <h3>exam_comp_set7</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>1,096</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>2,179</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>80</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>1,299,795</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.023 s. (23 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set7_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set7_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set7_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set7_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_25c1f"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_25c1f.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set7_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_ad69b"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_ad69b.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set7_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set7_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set7/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set7/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set7/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set7/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set7/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set7_First-002D0020Fit">
+                            <h4>exam_comp_set7_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set7_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set7_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set7_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set7_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set7_Tabu-002D0020Search">
+                            <h4>exam_comp_set7_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set7_Late-002D0020Acceptance">
+                            <h4>exam_comp_set7_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+                <section id="problemBenchmark_exam_comp_set8">
+                    <h3>exam_comp_set8</h3>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Entity count</th>
+                                <td>598</td>
+                            </tr>
+                            <tr>
+                                <th>Variable count</th>
+                                <td>1,191</td>
+                            </tr>
+                            <tr>
+                                <th>Maximum value count</th>
+                                <td>80</td>
+                            </tr>
+                            <tr>
+                                <th>Problem scale</th>
+                                <td>379,560</td>
+                            </tr>
+                                <tr>
+                                    <th>Time to load input solution</th>
+                                    <td>0.013 s. (13 ms.)</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                        <div class="tabbable">
+                            <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="problemStatistic_exam_comp_set8_BEST_SCORE-tab" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set8_BEST_SCORE-tab-pane" type="button">Best Score</button>
+                                    </li>
+                            </ul>
+                            <div class="tab-content p-2">
+                                    <div class="tab-pane show active" id="problemStatistic_exam_comp_set8_BEST_SCORE-tab-pane">
+    <div class="tabbable">
+        <div class="tab-content">
+                <div class="tab-pane show active" id="problemStatistic_exam_comp_set8_BEST_SCORE_chart_0-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart0_1cdcd"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart0_1cdcd.js"></script>
+    </div>
+                </div>
+                <div class="tab-pane show" id="problemStatistic_exam_comp_set8_BEST_SCORE_chart_1-tab-pane">
+    <div class="chart-container mb-2">
+        <canvas id="chart_bestScoreProblemStatisticChart1_3a445"></canvas>
+        <script async src="website/js/bestScoreProblemStatisticChart1_3a445.js"></script>
+    </div>
+                </div>
+        </div>
+        <ul class="nav nav-pills justify-content-center mb-2">
+                <li><button class="btn-secondary nav-link active" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set8_BEST_SCORE_chart_0-tab-pane" type="button">Hard Score</button></li>
+                <li><button class="btn-secondary nav-link" data-bs-toggle="pill" data-bs-target="#problemStatistic_exam_comp_set8_BEST_SCORE_chart_1-tab-pane" type="button">Soft Score</button></li>
+        </ul>
+    </div>
+                                            <span>CSV files per solver:</span>
+                                            <div class="btn-group">
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set8/First Fit/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set8/First Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set8/Weakest Fit Decreasing/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set8/Tabu Search/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                                    <button class="btn" onclick="window.location.href='exam_comp_set8/Late Acceptance/sub0/BEST_SCORE.csv'"><i class="fa fa-solid fa-download"></i></button>
+                                            </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <section id="singleBenchmark_exam_comp_set8_First-002D0020Fit">
+                            <h4>exam_comp_set8_First Fit</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set8_First-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set8_First Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set8_Weakest-002D0020Fit-002D0020Decreasing">
+                            <h4>exam_comp_set8_Weakest Fit Decreasing</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set8_Tabu-002D0020Search">
+                            <h4>exam_comp_set8_Tabu Search</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                        <section id="singleBenchmark_exam_comp_set8_Late-002D0020Acceptance">
+                            <h4>exam_comp_set8_Late Acceptance</h4>
+                                    <p>Score summary not provided.</p>
+                        </section>
+                </section>
+        </section>
+
+        <section id="solverBenchmarkResult">
+            <h2>Solver benchmarks</h2>
+            <ul class="nav nav-pills justify-content-center p-2" id="solverBenchmarkResultTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="solverBenchmark_First-002D0020Fit_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_First-002D0020Fit_config-tab-pane" type="button">
+                            First Fit&nbsp;        <span class="badge text-bg-secondary">4</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="solverBenchmark_First-002D0020Fit-002D0020Decreasing_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_First-002D0020Fit-002D0020Decreasing_config-tab-pane" type="button">
+                            First Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">3</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="solverBenchmark_Weakest-002D0020Fit-002D0020Decreasing_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_Weakest-002D0020Fit-002D0020Decreasing_config-tab-pane" type="button">
+                            Weakest Fit Decreasing&nbsp;        <span class="badge text-bg-secondary">2</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="solverBenchmark_Tabu-002D0020Search_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_Tabu-002D0020Search_config-tab-pane" type="button">
+                            Tabu Search&nbsp;        <span class="badge text-bg-secondary">1</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="solverBenchmark_Late-002D0020Acceptance_config-tab" data-bs-toggle="pill" data-bs-target="#solverBenchmark_Late-002D0020Acceptance_config-tab-pane" type="button">
+                            Late Acceptance&nbsp;        <span class="badge text-bg-success">0</span>
+
+        <span class="badge text-bg-warning" data-toggle="tooltip" title="Has an infeasible score">!</span>
+
+                        </button>
+                    </li>
+            </ul>
+            <div class="tab-content">
+                    <div class="tab-pane show active" id="solverBenchmark_First-002D0020Fit_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_First-002D0020Fit_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.examination.domain.Examination&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.FollowingExam&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.examination.score.ExaminationConstraintProvider&lt;/constraintProviderClass&gt;
+    &lt;initializingScoreTrend&gt;ONLY_DOWN&lt;/initializingScoreTrend&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+  &lt;constructionHeuristic&gt;
+    &lt;queuedEntityPlacer&gt;
+      &lt;entitySelector id=&quot;placerEntitySelector&quot;&gt;
+        &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+        &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+      &lt;/entitySelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;room&quot;&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+    &lt;/queuedEntityPlacer&gt;
+  &lt;/constructionHeuristic&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="solverBenchmark_First-002D0020Fit-002D0020Decreasing_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_First-002D0020Fit-002D0020Decreasing_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.examination.domain.Examination&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.FollowingExam&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.examination.score.ExaminationConstraintProvider&lt;/constraintProviderClass&gt;
+    &lt;initializingScoreTrend&gt;ONLY_DOWN&lt;/initializingScoreTrend&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+  &lt;constructionHeuristic&gt;
+    &lt;queuedEntityPlacer&gt;
+      &lt;entitySelector id=&quot;placerEntitySelector&quot;&gt;
+        &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+        &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+        &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+        &lt;sorterManner&gt;DECREASING_DIFFICULTY&lt;/sorterManner&gt;
+      &lt;/entitySelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;room&quot;&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+    &lt;/queuedEntityPlacer&gt;
+  &lt;/constructionHeuristic&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="solverBenchmark_Weakest-002D0020Fit-002D0020Decreasing_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_Weakest-002D0020Fit-002D0020Decreasing_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.examination.domain.Examination&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.FollowingExam&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.examination.score.ExaminationConstraintProvider&lt;/constraintProviderClass&gt;
+    &lt;initializingScoreTrend&gt;ONLY_DOWN&lt;/initializingScoreTrend&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+  &lt;constructionHeuristic&gt;
+    &lt;queuedEntityPlacer&gt;
+      &lt;entitySelector id=&quot;placerEntitySelector&quot;&gt;
+        &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+        &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+        &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+        &lt;sorterManner&gt;DECREASING_DIFFICULTY&lt;/sorterManner&gt;
+      &lt;/entitySelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;room&quot;&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+            &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+            &lt;sorterManner&gt;INCREASING_STRENGTH&lt;/sorterManner&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+    &lt;/queuedEntityPlacer&gt;
+  &lt;/constructionHeuristic&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="solverBenchmark_Tabu-002D0020Search_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_Tabu-002D0020Search_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.examination.domain.Examination&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.FollowingExam&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.examination.score.ExaminationConstraintProvider&lt;/constraintProviderClass&gt;
+    &lt;initializingScoreTrend&gt;ONLY_DOWN&lt;/initializingScoreTrend&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+  &lt;constructionHeuristic&gt;
+    &lt;queuedEntityPlacer&gt;
+      &lt;entitySelector id=&quot;placerEntitySelector&quot;&gt;
+        &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+        &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+        &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+        &lt;sorterManner&gt;DECREASING_DIFFICULTY&lt;/sorterManner&gt;
+      &lt;/entitySelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;room&quot;&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+            &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+            &lt;sorterManner&gt;INCREASING_STRENGTH&lt;/sorterManner&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+    &lt;/queuedEntityPlacer&gt;
+  &lt;/constructionHeuristic&gt;
+  &lt;localSearch&gt;
+    &lt;unionMoveSelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector id=&quot;cartesianProductEntitySelector&quot;&gt;
+            &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+          &lt;/entitySelector&gt;
+          &lt;valueSelector variableName=&quot;room&quot;/&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;cartesianProductEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+      &lt;swapMoveSelector&gt;
+        &lt;entitySelector&gt;
+          &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+        &lt;/entitySelector&gt;
+      &lt;/swapMoveSelector&gt;
+    &lt;/unionMoveSelector&gt;
+    &lt;acceptor&gt;
+      &lt;entityTabuSize&gt;10&lt;/entityTabuSize&gt;
+    &lt;/acceptor&gt;
+    &lt;forager&gt;
+      &lt;acceptedCountLimit&gt;2000&lt;/acceptedCountLimit&gt;
+    &lt;/forager&gt;
+  &lt;/localSearch&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="tab-pane show" id="solverBenchmark_Late-002D0020Acceptance_config-tab-pane">
+                        <div class="tab-content" id="solverBenchmark_Late-002D0020Acceptance_config-tabContent">
+                            <pre class="prettyprint language-xml p-2"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;solver xmlns=&quot;https://timefold.ai/xsd/solver&quot;&gt;
+  &lt;monitoring&gt;
+    &lt;metric&gt;BEST_SCORE&lt;/metric&gt;
+  &lt;/monitoring&gt;
+  &lt;solutionClass&gt;ai.timefold.solver.examples.examination.domain.Examination&lt;/solutionClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+  &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.FollowingExam&lt;/entityClass&gt;
+  &lt;scoreDirectorFactory&gt;
+    &lt;constraintProviderClass&gt;ai.timefold.solver.examples.examination.score.ExaminationConstraintProvider&lt;/constraintProviderClass&gt;
+    &lt;initializingScoreTrend&gt;ONLY_DOWN&lt;/initializingScoreTrend&gt;
+  &lt;/scoreDirectorFactory&gt;
+  &lt;termination&gt;
+    &lt;minutesSpentLimit&gt;5&lt;/minutesSpentLimit&gt;
+  &lt;/termination&gt;
+  &lt;constructionHeuristic&gt;
+    &lt;queuedEntityPlacer&gt;
+      &lt;entitySelector id=&quot;placerEntitySelector&quot;&gt;
+        &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+        &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+        &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+        &lt;sorterManner&gt;DECREASING_DIFFICULTY&lt;/sorterManner&gt;
+      &lt;/entitySelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;placerEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;room&quot;&gt;
+            &lt;cacheType&gt;PHASE&lt;/cacheType&gt;
+            &lt;selectionOrder&gt;SORTED&lt;/selectionOrder&gt;
+            &lt;sorterManner&gt;INCREASING_STRENGTH&lt;/sorterManner&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+    &lt;/queuedEntityPlacer&gt;
+  &lt;/constructionHeuristic&gt;
+  &lt;localSearch&gt;
+    &lt;unionMoveSelector&gt;
+      &lt;cartesianProductMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector id=&quot;cartesianProductEntitySelector&quot;&gt;
+            &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.Exam&lt;/entityClass&gt;
+          &lt;/entitySelector&gt;
+          &lt;valueSelector variableName=&quot;room&quot;/&gt;
+        &lt;/changeMoveSelector&gt;
+        &lt;changeMoveSelector&gt;
+          &lt;entitySelector mimicSelectorRef=&quot;cartesianProductEntitySelector&quot;/&gt;
+          &lt;valueSelector variableName=&quot;period&quot;&gt;
+            &lt;downcastEntityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/downcastEntityClass&gt;
+          &lt;/valueSelector&gt;
+        &lt;/changeMoveSelector&gt;
+      &lt;/cartesianProductMoveSelector&gt;
+      &lt;swapMoveSelector&gt;
+        &lt;entitySelector&gt;
+          &lt;entityClass&gt;ai.timefold.solver.examples.examination.domain.LeadingExam&lt;/entityClass&gt;
+        &lt;/entitySelector&gt;
+      &lt;/swapMoveSelector&gt;
+    &lt;/unionMoveSelector&gt;
+    &lt;acceptor&gt;
+      &lt;lateAcceptanceSize&gt;1000&lt;/lateAcceptanceSize&gt;
+    &lt;/acceptor&gt;
+    &lt;forager&gt;
+      &lt;acceptedCountLimit&gt;1&lt;/acceptedCountLimit&gt;
+    &lt;/forager&gt;
+  &lt;/localSearch&gt;
+&lt;/solver&gt;
+</code></pre>
+                        </div>
+                    </div>
+            </div>
+        </section>
+
+        <section id="environmentInformation">
+            <h2>Environment Information</h2>
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th>
+                    <td>2023-06-21_205008</td>
+                </tr>
+                <tr>
+                    <th>Aggregation</th>
+                    <td>false</td>
+                </tr>
+                <tr>
+                    <th>Failure count</th>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <th>Starting timestamp</th>
+                    <td>Jun 21, 2023, 8:50:08 PM</td>
+                </tr>
+                <tr>
+                    <th>Warm-up time spent</th>
+                        <td>0.030 s. (30 ms.)</td>
+                </tr>
+                <tr>
+                    <th>Parallel benchmark count / available processors</th>
+                        <td>9 / 16</td>
+                </tr>
+                <tr>
+                    <th>Benchmark time spent</th>
+                        <td>10:22.141 s. (622,141 ms.)</td>
+                </tr>
+                <tr>
+                    <th>Environment mode</th>
+                    <td>REPRODUCIBLE</td>
+                </tr>
+                <tr>
+                    <th>Logging level for ai.timefold.solver.core</th>
+                    <td>DEBUG</td>
+                </tr>
+                <tr>
+                    <th>Solver ranking class</th>
+                    <td>
+                        <span data-toggle="tooltip" title="ai.timefold.solver.benchmark.impl.ranking.TotalScoreSolverRankingComparator">
+                            TotalScoreSolverRankingComparator
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>VM max memory (as in -Xmx but lower)</th>
+                        <td>16,953,376,768 bytes</td>
+                </tr>
+                <tr>
+                    <th>Timefold version</th>
+                    <td>0.9.40-SNAPSHOT</td>
+                </tr>
+                <tr>
+                    <th>Java version</th>
+                    <td>Java 17.0.7 (Amazon.com Inc.)</td>
+                </tr>
+                <tr>
+                    <th>Java VM</th>
+                    <td>Java OpenJDK 64-Bit Server VM 17.0.7+7-LTS (Amazon.com Inc.)</td>
+                </tr>
+                <tr>
+                    <th>Operating system</th>
+                    <td>Windows 11 amd64 10.0</td>
+                </tr>
+                <tr>
+                    <th>Report locale</th>
+                    <td>Unknown</td>
+                </tr>
+                <tr>
+                    <th>Report timezone</th>
+                    <td>Asia/Seoul</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+    <footer class="bg-black text-white-50">
+        <div class="container">
+            <div class="hstack gap-3 p-4">
+                <div class="ms-auto"><a class="text-white" href="https://timefold.ai">Timefold</a></div>
+                <div class="vr"></div>
+                <div><a class="text-white" href="https://timefold.ai/docs">Documentation</a></div>
+                <div class="vr"></div>
+                <div><a class="text-white" href="https://github.com/TimefoldAI">Code</a></div>
+                <div class="vr"></div>
+                <div class="me-auto"><a class="text-white" href="https://timefold.ai/product/support/">Support</a></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
