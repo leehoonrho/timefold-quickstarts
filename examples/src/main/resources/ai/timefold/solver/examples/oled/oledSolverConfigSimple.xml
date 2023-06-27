@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
+    <!--    https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#invalidScoreDetection-->
+    <!-- To slowly prove there are no bugs in this code -->
+    <!--    <environmentMode>FULL_ASSERT</environmentMode>-->
+    <!--    <environmentMode>FAST_ASSERT</environmentMode>-->
+    <randomType>MERSENNE_TWISTER</randomType>
+    <randomSeed>0</randomSeed>
+    <!-- To solve faster by saturating multiple CPU cores -->
+    <!--    <moveThreadCount>AUTO</moveThreadCount>-->
+    <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
+
+    <!-- Define the model -->
+    <solutionClass>ai.timefold.solver.examples.examination.domain.oled.ProjectSchedule</solutionClass>
+    <entityClass>ai.timefold.solver.examples.oled.domain.Activity</entityClass>
+    <entityClass>ai.timefold.solver.examples.oled.domain.ChamgerAssign</entityClass>
+    <!-- Define the score function -->
+    <scoreDirectorFactory>
+        <constraintProviderClass>ai.timefold.solver.examples.examination.domain.oled.score.PlanResultProvider</constraintProviderClass>
+        <!--        https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#initializingScoreTrend-->
+        <!--        Most use cases only have negative constraints. Many of those have an InitializingScoreTrend that only goes down:-->
+        <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
+    </scoreDirectorFactory>
+
+    <!-- Configure the optimization algorithms (optional)
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#optimizationAlgorithmsOverview
+    Timefold supports three families of optimization algorithms: Exhaustive Search, Construction Heuristics and Metaheuristics.
+    In practice, Metaheuristics (in combination with Construction Heuristics to initialize) are the recommended choice:
+
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse
+
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#solverPhase
+    If no phases are configured, Timefold will default to a Construction Heuristic phase followed by a Local Search phase.
+    Some phases (especially construction heuristics) will terminate automatically. Other phases (especially metaheuristics) will only terminate if the Phase is configured to terminate:
+
+    If the Solver terminates (before the last Phase terminates itself), the current phase is terminated and all subsequent phases will not run.
+    -->
+    <!-- Optimization algorithms configuration -->
+    <termination><!-- Solver termination -->
+        <!-- 2 minutes and 30 seconds in ISO 8601 format P[n]Y[n]M[n]DT[n]H[n]M[n]S -->
+        <spentLimit>PT02M</spentLimit>
+    </termination>
+
+    <constructionHeuristic/>
+
+    <localSearch>
+        <termination><!-- Phase termination -->
+            <spentLimit>PT01M</spentLimit>
+        </termination>
+        <localSearchType>TABU_SEARCH</localSearchType>
+    </localSearch>
+</solver>
