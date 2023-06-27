@@ -1,4 +1,4 @@
-package ai.timefold.solver.examples.oled2.domain;
+package ai.timefold.solver.examples.oled.domain;
 
 public enum CapacityConstraintType {
 

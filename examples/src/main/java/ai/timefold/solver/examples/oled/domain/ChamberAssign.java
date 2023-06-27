@@ -1,9 +1,16 @@
-package ai.timefold.solver.examples.oled2.domain;
+package ai.timefold.solver.examples.oled.domain;
+
+import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
+import ai.timefold.solver.examples.common.domain.AbstractPersistable;
+import ai.timefold.solver.examples.common.swingui.components.Labeled;
+import ai.timefold.solver.examples.oled.domain.solver.CapacittyUpdatingVariableListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChamberAssign {
+@PlanningEntity
+public class ChamberAssign extends AbstractPersistable implements Labeled {
 
     private Chamber chamber;
     private TimeBucket timeBucket;

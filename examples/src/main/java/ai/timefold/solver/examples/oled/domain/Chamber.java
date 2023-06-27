@@ -1,28 +1,40 @@
 package ai.timefold.solver.examples.oled.domain;
 
+import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.examples.common.domain.AbstractPersistable;
 import ai.timefold.solver.examples.common.swingui.components.Labeled;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Chamber extends AbstractPersistable implements Labeled {
 
-    private int capacity;
-    private int penalty;
+    private Phase phase;
+    private String name;
+    private List<ChamberAssign> chamberAssignList = new ArrayList<>();
+    private CapacityConstraint constraint; // slack variable
 
-    public int getCapacity() {
-        return capacity;
+    public Chamber(String name, Phase phase) {
+        this.name = name;
+        this.phase = phase;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+    public String getName() {
+        return name;
     }
 
-    public int getPenalty() {
-        return penalty;
+    public Phase getPhase() {
+        return phase;
     }
 
-    public void setPenalty(int penalty) {
-        this.penalty = penalty;
+    public void setChamberAssignList(List<ChamberAssign> chamberAssignList) {
+        this.chamberAssignList = chamberAssignList;
     }
+
+    public List<ChamberAssign> getChamberAssignList() {
+        return chamberAssignList;
+    }
+
 
     @Override
     public String getLabel() {
@@ -33,24 +45,4 @@ public class Chamber extends AbstractPersistable implements Labeled {
     public String toString() {
         return Long.toString(id);
     }
-
-    // ************************************************************************
-    // With methods
-    // ************************************************************************
-
-    public Chamber withId(long id) {
-        this.setId(id);
-        return this;
-    }
-
-    public Chamber withCapacity(int capacity) {
-        this.setCapacity(capacity);
-        return this;
-    }
-
-    public Chamber withPenalty(int penalty) {
-        this.setPenalty(penalty);
-        return this;
-    }
-
 }

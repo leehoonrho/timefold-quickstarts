@@ -1,4 +1,4 @@
-package ai.timefold.solver.examples.oled.domain;
+package ai.timefold.solver.examples.oled.domain.old;
 
 import ai.timefold.solver.examples.common.domain.AbstractPersistable;
 import ai.timefold.solver.examples.common.persistence.jackson.JacksonUniqueIdGenerator;

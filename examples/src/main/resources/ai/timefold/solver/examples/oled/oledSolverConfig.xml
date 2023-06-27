@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
+    <!--    https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#invalidScoreDetection-->
+    <!-- To slowly prove there are no bugs in this code -->
+    <!--    <environmentMode>FULL_ASSERT</environmentMode>-->
+    <!--    <environmentMode>FAST_ASSERT</environmentMode>-->
+    <randomType>MERSENNE_TWISTER</randomType>
+    <randomSeed>0</randomSeed>
+    <!-- To solve faster by saturating multiple CPU cores -->
+    <!--    <moveThreadCount>AUTO</moveThreadCount>-->
+    <!--  https://timefold.ai/docs/timefold-solver/latest/configuration/configuration.html#randomNumberGenerator-->
+
+    <!-- Define the model -->
+    <solutionClass>ai.timefold.solver.examples.examination.domain.oled.ProjectSchedule</solutionClass>
+    <entityClass>ai.timefold.solver.examples.oled.domain.Activity</entityClass>
+    <entityClass>ai.timefold.solver.examples.oled.domain.ChamgerAssign</entityClass>
+    <!-- Define the score function -->
+    <scoreDirectorFactory>
+        <constraintProviderClass>ai.timefold.solver.examples.examination.domain.oled.score.PlanResultProvider</constraintProviderClass>
+        <!--        https://timefold.ai/docs/timefold-solver/latest/score-calculation/score-calculation.html#initializingScoreTrend-->
+        <!--        Most use cases only have negative constraints. Many of those have an InitializingScoreTrend that only goes down:-->
+        <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
+    </scoreDirectorFactory>
+
+    <!-- Configure the optimization algorithms (optional)
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#optimizationAlgorithmsOverview
+    Timefold supports three families of optimization algorithms: Exhaustive Search, Construction Heuristics and Metaheuristics.
+    In practice, Metaheuristics (in combination with Construction Heuristics to initialize) are the recommended choice:
+
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse
+
+    https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#solverPhase
+    If no phases are configured, Timefold will default to a Construction Heuristic phase followed by a Local Search phase.
+    Some phases (especially construction heuristics) will terminate automatically. Other phases (especially metaheuristics) will only terminate if the Phase is configured to terminate:
+
+    If the Solver terminates (before the last Phase terminates itself), the current phase is terminated and all subsequent phases will not run.
+    -->
+    <!-- Optimization algorithms configuration -->
+    <termination><!-- Solver termination -->
+        <!-- 2 minutes and 30 seconds in ISO 8601 format P[n]Y[n]M[n]DT[n]H[n]M[n]S -->
+        <spentLimit>PT05M</spentLimit>
+    </termination>
+
+    <constructionHeuristic/>
+
+    <!--  https://timefold.ai/docs/timefold-solver/latest/optimization-algorithms/optimization-algorithms.html#whichOptimizationAlgorithmsShouldIUse-->
+
+    <!--  # Simple single algorithms    -->
+    <!--    <localSearch>-->
+    <!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+    <!--    </localSearch>-->
+    <!--    Simple Late Acceptance Only-->
+    <!--    # solution elapsed time-->
+    <!--    2 minutes 30 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--     0hard/11soft-->
+    <!--    <localSearch>-->
+    <!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+    <!--    </localSearch>-->
+    <!--    Simple Tabu Search Only-->
+    <!--    # solution elapsed time-->
+    <!--    2 minutes 30 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--     0hard/10soft-->
+
+    <!--  https://stackoverflow.com/questions/36802284/optaplanner-how-to-specify-multiple-algorithms-->
+    <!--  https://stackoverflow.com/questions/60415436/how-can-i-configurate-the-late-acceptance-algorithm-->
+    <!--# Sequence-->
+    <!-- Second phase: Late Acceptance -->
+    <localSearch>
+        <termination><!-- Phase termination -->
+            <terminationCompositionStyle>AND</terminationCompositionStyle>
+            <!--            <spentLimit>PT1M</spentLimit>-->
+            <!--            <bestScoreFeasible>true</bestScoreFeasible>-->
+            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
+            <unimprovedStepCountLimit>1000</unimprovedStepCountLimit>
+        </termination>
+        <localSearchType>LATE_ACCEPTANCE</localSearchType>
+    </localSearch>
+    <!-- Third phase: Tabu Search-->
+    <localSearch>
+        <termination><!-- Phase termination -->
+            <terminationCompositionStyle>AND</terminationCompositionStyle>
+            <!--            <spentLimit>PT1M</spentLimit>-->
+            <!--            <bestScoreFeasible>true</bestScoreFeasible>-->
+            <unimprovedSpentLimit>PT30S</unimprovedSpentLimit>
+            <unimprovedStepCountLimit>1000</unimprovedStepCountLimit>
+        </termination>
+        <localSearchType>TABU_SEARCH</localSearchType>
+    </localSearch>
+    <!--    Late Acceptance + Tabu Search-->
+    <!--    # solution elapsed time-->
+    <!--    1 minute 2 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/11soft-->
+    <!--    Late Acceptance Only-->
+    <!--    # solution elapsed time-->
+    <!--    32 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/11soft-->
+    <!--    Tabu Search Only-->
+    <!--    # solution elapsed time-->
+    <!--    31 seconds-->
+    <!--    # solution feasible-->
+    <!--    true-->
+    <!--    # solution score-->
+    <!--    0hard/10soft-->
+
+    <!--    <termination>&lt;!&ndash; Solver termination &ndash;&gt;-->
+    <!--        <spentLimit>PT5S</spentLimit>-->
+    <!--        <spentLimit>PT5M</spentLimit>-->
+    <!--    </termination>-->
+    <!--    https://timefold.ai/docs/timefold-solver/latest/construction-heuristics/construction-heuristics.html--><!--    <constructionHeuristic>-->
+    <!--        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>-->
+    <!--        Construction Heuristic phase (0) ended: time spent (693), best score (-1hard/-15soft), score calculation speed (1224/sec), step total (20)-->
+    <!--        <constructionHeuristicType>ALLOCATE_ENTITY_FROM_QUEUE</constructionHeuristicType>-->
+    <!--        Construction Heuristic phase (0) ended: time spent (657), best score (-1hard/-15soft), score calculation speed (1780/sec), step total (20).-->
+    <!--        <constructionHeuristicType>CHEAPEST_INSERTION</constructionHeuristicType>-->
+    <!--        Construction Heuristic phase (0) ended: time spent (1949), best score (-1hard/-7soft), score calculation speed (3730/sec), step total (20).-->
+    <!--        <constructionHeuristicType>ALLOCATE_FROM_POOL</constructionHeuristicType>-->
+    <!--        Construction Heuristic phase (0) ended: time spent (2011), best score (-1hard/-7soft), score calculation speed (3610/sec), step total (20).-->
+    <!--ERROR-->
+    <!--        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>-->
+    <!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+    <!--        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>-->
+    <!--        The sorterManner (INCREASING_STRENGTH) on entity class (class com.plannel.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
+    <!--        <constructionHeuristicType>WEAKEST_FIT_DECREASING</constructionHeuristicType>-->
+    <!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+    <!--        <constructionHeuristicType>STRONGEST_FIT</constructionHeuristicType>-->
+    <!--        The sorterManner (DECREASING_STRENGTH) on entity class (class com.plannel.schooltimetabling.domain.Lesson)'s variable (room) fails because that variable getter's @PlanningVariable annotation does not declare any strength comparison.-->
+    <!--        <constructionHeuristicType>STRONGEST_FIT_DECREASING</constructionHeuristicType>-->
+    <!--        The sorterManner (DECREASING_DIFFICULTY) on entity class (class com.plannel.schooltimetabling.domain.Lesson) fails because that entity class's @PlanningEntity annotation does not declare any difficulty comparison.-->
+    <!--        <constructionHeuristicType>ALLOCATE_TO_VALUE_FROM_QUEUE</constructionHeuristicType>-->
+    <!--        The config (QueuedValuePlacerConfig(null, null)) has no configured variableName for entityClass (class com.plannel.schooltimetabling.domain.Lesson) and because there are multiple variableNames ([room, timeslot]), it cannot be deduced automatically.-->
+    <!--    </constructionHeuristic>-->
+    <!--    https://timefold.ai/docs/timefold-solver/latest/local-search/local-search.html-->
+    <!--    <localSearch>-->
+    <!--        5 sec -->
+    <!--        5 min -->
+    <!--        # Hill climbing (simple local search)-->
+    <!--        <localSearchType>HILL_CLIMBING</localSearchType>-->
+    <!--        0hard/6soft-->
+    <!--        0hard/6soft-->
+    <!--        # Tabu search-->
+    <!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+    <!--        0hard/10soft-->
+    <!--        0hard/10soft-->
+    <!--        # Simulated annealing-->
+    <!--        <localSearchType>SIMULATED_ANNEALING</localSearchType>-->
+    <!--        The acceptorType (SIMULATED_ANNEALING) currently requires a acceptorConfig.getSimulatedAnnealingStartingTemperature() (null).-->
+    <!--        # Late acceptance-->
+    <!--        <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+    <!--        0hard/11soft-->
+    <!--        0hard/11soft-->
+    <!--        # Great Deluge-->
+    <!--        <localSearchType>GREAT_DELUGE</localSearchType>-->
+    <!--        0hard/0soft-->
+    <!--        0hard/6soft-->
+    <!--        # Step counting hill climbing-->
+    <!--        <acceptor>-->
+    <!--            <stepCountingHillClimbingSize>400</stepCountingHillClimbingSize>-->
+    <!--        </acceptor>-->
+    <!--        <forager>-->
+    <!--            <acceptedCountLimit>1</acceptedCountLimit>-->
+    <!--        </forager>-->
+    <!--        0hard/9soft-->
+    <!--        0hard/9soft-->
+    <!--        # Strategic oscillation-->
+    <!--        The following finalistPodiumTypes are supported:-->
+    <!--        HIGHEST_SCORE (default): Pick the accepted move with the highest score.-->
+    <!--        STRATEGIC_OSCILLATION: Alias for the default strategic oscillation variant.-->
+    <!--        STRATEGIC_OSCILLATION_BY_LEVEL: If there is an accepted improving move, pick it. If no such move exists, prefer an accepted move which improves a softer score level over one that doesn’t (even if it has a better harder score level). A move is improving if it’s better than the last completed step score.-->
+    <!--        STRATEGIC_OSCILLATION_BY_LEVEL_ON_BEST_SCORE: Like STRATEGIC_OSCILLATION_BY_LEVEL, but define improving as better than the best score (instead of the last completed step score).-->
+    <!--        <acceptor>-->
+    <!--            <entityTabuSize>7</entityTabuSize>-->
+    <!--        </acceptor>-->
+    <!--        <forager>-->
+    <!--            <acceptedCountLimit>1000</acceptedCountLimit>-->
+    <!--            <finalistPodiumType>STRATEGIC_OSCILLATION</finalistPodiumType>-->
+    <!--        </forager>-->
+    <!--        0hard/11soft-->
+    <!--        0hard/11soft-->
+    <!--        # Variable neighborhood descent-->
+    <!--        <localSearchType>VARIABLE_NEIGHBORHOOD_DESCENT</localSearchType>-->
+    <!--        0hard/10soft-->
+    <!--        0hard/10soft-->
+    <!--    </localSearch>-->
+</solver>

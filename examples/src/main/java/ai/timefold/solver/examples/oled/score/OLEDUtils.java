@@ -1,9 +1,9 @@
 package ai.timefold.solver.examples.oled.score;
 
 import ai.timefold.solver.core.impl.phase.Phase;
-import ai.timefold.solver.examples.oled.domain.Activity;
-import ai.timefold.solver.examples.oled.domain.ELDevice;
-import ai.timefold.solver.examples.oled.domain.Project;
+import ai.timefold.solver.examples.oled.domain.old.Activity;
+import ai.timefold.solver.examples.oled.domain.old.ELDevice;
+import ai.timefold.solver.examples.oled.domain.old.Project;
 
 import java.util.ArrayList;
 import java.util.List;
