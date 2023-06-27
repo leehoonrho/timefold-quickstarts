@@ -1,7 +1,6 @@
 package ai.timefold.solver.examples.oled.domain;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
-import ai.timefold.solver.examples.examination.domain.Period;
 import ai.timefold.solver.examples.oled.domain.old.Chamber;
 import ai.timefold.solver.examples.oled.domain.old.Phase;
 import ai.timefold.solver.examples.oled.domain.old.Project;
@@ -9,7 +8,7 @@ import ai.timefold.solver.examples.oled.domain.old.Project;
 import java.util.List;
 
 @PlanningSolution
-public class ProjectSchedule {
+public class OledProjectSchedule {
 
     private List<TimeBucket> timeBucketList;
 
