@@ -217,5 +217,11 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
     </dependency>
+      <dependency>
+          <groupId>ai.timefold.solver</groupId>
+          <artifactId>timefold-solver-core-impl</artifactId>
+          <version>0.9.40-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 </project>
