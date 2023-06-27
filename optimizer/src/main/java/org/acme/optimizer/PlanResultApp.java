@@ -170,7 +170,7 @@ public class PlanResultApp {
 
         for (Order order : orderList) {
             int qty = order.getQty();
-            int lotSize = 100;
+            int lotSize = 50;
 
             int partialActivity = qty / lotSize;
             int remainActivity = qty % lotSize;
